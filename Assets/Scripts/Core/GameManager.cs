@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
 
     public event Action<int> OnLivesChanged;
     public event Action<int> OnGoldChanged;
+    public event Action<int> OnLivesLost;
+    public event Action<int> OnGoldSpent;
     public event Action<GameState> OnStateChanged;
     public event Action<int, int> OnWaveChanged;
     public event Action OnGameOver;
@@ -91,6 +93,7 @@ public class GameManager : MonoBehaviour
         if (gold < amount) return false;
         gold -= amount;
         OnGoldChanged?.Invoke(gold);
+        OnGoldSpent?.Invoke(amount);
         return true;
     }
 
@@ -106,9 +109,11 @@ public class GameManager : MonoBehaviour
     {
         if (state == GameState.Defeat || state == GameState.Victory) return;
 
-        lives -= Mathf.Max(1, amount);
+        int appliedDamage = Mathf.Max(1, amount);
+        lives -= appliedDamage;
         if (lives < 0) lives = 0;
         OnLivesChanged?.Invoke(lives);
+        OnLivesLost?.Invoke(appliedDamage);
 
         if (lives <= 0)
         {

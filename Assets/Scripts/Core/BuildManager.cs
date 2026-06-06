@@ -8,19 +8,19 @@ public class BuildManager : MonoBehaviour
     public bool requireBuildNodes = false;
     public LayerMask buildNodeLayer;
     public LayerMask placeableGround;   // e.g. "Ground"
-    public LayerMask waterLayers;       // e.g. "Water"
     public LayerMask blockedLayers;     // e.g. "NoBuild" | "Enemy" | "Tower"
     public float   minClearRadius = 0.35f; // no overlap radius check
     public bool    snapToGrid = true;
     public float   gridSize = 0.5f;
+    [Min(0.1f)] public float waterRouteWidth = 1.15f;
 
     [Header("Ghost")]
     public Color okColor   = new Color(0.6f, 1f, 0.6f, 0.6f);
     public Color badColor  = new Color(1f, 0.5f, 0.5f, 0.6f);
 
     [HideInInspector] public Tower towerToBuild; // selected prefab
+    [HideInInspector] public Path activePath;
     private SpriteRenderer[] groundRenderers = System.Array.Empty<SpriteRenderer>();
-    private SpriteRenderer[] waterRenderers = System.Array.Empty<SpriteRenderer>();
 
     private void Awake()
     {
@@ -58,7 +58,6 @@ public class BuildManager : MonoBehaviour
     {
         var renderers = FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Exclude);
         var groundList = new System.Collections.Generic.List<SpriteRenderer>();
-        var waterList = new System.Collections.Generic.List<SpriteRenderer>();
 
         foreach (var renderer in renderers)
         {
@@ -69,14 +68,9 @@ public class BuildManager : MonoBehaviour
             {
                 groundList.Add(renderer);
             }
-            if ((waterLayers.value & layerMask) != 0)
-            {
-                waterList.Add(renderer);
-            }
         }
 
         groundRenderers = groundList.ToArray();
-        waterRenderers = waterList.ToArray();
     }
 
     private bool IsOnBuildableGround(Vector3 position)
@@ -99,14 +93,24 @@ public class BuildManager : MonoBehaviour
 
     private bool IsOnWater(Vector3 position)
     {
-        if (waterRenderers.Length == 0)
+        if (!activePath)
         {
-            CachePlacementSurfaces();
+            activePath = FindAnyObjectByType<Path>();
         }
 
-        foreach (var renderer in waterRenderers)
+        if (!activePath || activePath.Count < 2)
         {
-            if (RendererContainsOpaquePixel(renderer, position))
+            return false;
+        }
+
+        float halfWidth = waterRouteWidth * 0.5f;
+        for (int i = 0; i < activePath.Count - 1; i++)
+        {
+            var a = activePath.GetWaypoint(i);
+            var b = activePath.GetWaypoint(i + 1);
+            if (!a || !b) continue;
+
+            if (DistancePointToSegment(position, a.position, b.position) <= halfWidth)
             {
                 return true;
             }
@@ -115,57 +119,19 @@ public class BuildManager : MonoBehaviour
         return false;
     }
 
-    private static bool RendererContainsOpaquePixel(SpriteRenderer renderer, Vector3 worldPosition)
+    private static float DistancePointToSegment(Vector2 point, Vector2 segmentStart, Vector2 segmentEnd)
     {
-        if (!renderer || !renderer.enabled || renderer.sprite == null)
+        Vector2 segment = segmentEnd - segmentStart;
+        float lengthSquared = segment.sqrMagnitude;
+        if (lengthSquared <= Mathf.Epsilon)
         {
-            return false;
+            return Vector2.Distance(point, segmentStart);
         }
 
-        if (!renderer.bounds.Contains(worldPosition))
-        {
-            return false;
-        }
-
-        var sprite = renderer.sprite;
-        var texture = sprite.texture;
-        if (texture == null)
-        {
-            return false;
-        }
-
-        if (!texture.isReadable)
-        {
-            // Fallback if a texture import changes unexpectedly.
-            return true;
-        }
-
-        Vector3 local = renderer.transform.InverseTransformPoint(worldPosition);
-        float pixelsPerUnit = sprite.pixelsPerUnit;
-        Vector2 pivot = sprite.pivot;
-
-        float pixelX = local.x * pixelsPerUnit + pivot.x;
-        float pixelY = local.y * pixelsPerUnit + pivot.y;
-
-        if (renderer.flipX)
-        {
-            pixelX = sprite.rect.width - pixelX;
-        }
-
-        if (renderer.flipY)
-        {
-            pixelY = sprite.rect.height - pixelY;
-        }
-
-        if (pixelX < 0 || pixelY < 0 || pixelX >= sprite.rect.width || pixelY >= sprite.rect.height)
-        {
-            return false;
-        }
-
-        int textureX = Mathf.FloorToInt(sprite.rect.x + pixelX);
-        int textureY = Mathf.FloorToInt(sprite.rect.y + pixelY);
-        Color pixel = texture.GetPixel(textureX, textureY);
-        return pixel.a > 0.1f;
+        float t = Vector2.Dot(point - segmentStart, segment) / lengthSquared;
+        t = Mathf.Clamp01(t);
+        Vector2 projection = segmentStart + t * segment;
+        return Vector2.Distance(point, projection);
     }
 
     public static Vector3 Snap(Vector3 pos, float size)

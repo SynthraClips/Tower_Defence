@@ -12,6 +12,10 @@ public class HUDController : MonoBehaviour
     public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI victoryText;
     public TextMeshProUGUI stateText;
+    [Header("Feedback")]
+    [SerializeField] private Color spentColor = new Color(1f, 0.45f, 0.45f, 1f);
+    [SerializeField] private Color lostColor = new Color(1f, 0.35f, 0.35f, 1f);
+    [SerializeField] private Vector2 feedbackOffset = new Vector2(0f, 30f);
 
     [Header("Refs")]
     public GameManager gm;
@@ -33,6 +37,8 @@ public class HUDController : MonoBehaviour
             gm.OnVictory += ShowVictory;
             gm.OnStateChanged += UpdateState;
             gm.OnWaveChanged += UpdateWave;
+            gm.OnGoldSpent += ShowGoldSpent;
+            gm.OnLivesLost += ShowLivesLost;
         }
 
         if (spawner != null)
@@ -69,6 +75,8 @@ public class HUDController : MonoBehaviour
             gm.OnVictory -= ShowVictory;
             gm.OnStateChanged -= UpdateState;
             gm.OnWaveChanged -= UpdateWave;
+            gm.OnGoldSpent -= ShowGoldSpent;
+            gm.OnLivesLost -= ShowLivesLost;
         }
 
         if (spawner != null)
@@ -137,5 +145,67 @@ public class HUDController : MonoBehaviour
     private void HideIntermission()
     {
         if (waveTimerText) waveTimerText.gameObject.SetActive(false);
+    }
+
+    private void ShowGoldSpent(int amount)
+    {
+        ShowDeltaPopup(goldText, $"-{amount}", spentColor);
+    }
+
+    private void ShowLivesLost(int amount)
+    {
+        ShowDeltaPopup(livesText, $"-{amount}", lostColor);
+    }
+
+    private void ShowDeltaPopup(TextMeshProUGUI source, string text, Color color)
+    {
+        if (!source || !source.transform.parent) return;
+
+        var popupObject = new GameObject($"{source.name}_Delta");
+        popupObject.transform.SetParent(source.transform.parent, false);
+
+        var popupTransform = popupObject.AddComponent<RectTransform>();
+        popupTransform.anchorMin = source.rectTransform.anchorMin;
+        popupTransform.anchorMax = source.rectTransform.anchorMax;
+        popupTransform.pivot = source.rectTransform.pivot;
+        popupTransform.anchoredPosition = source.rectTransform.anchoredPosition + feedbackOffset;
+        popupTransform.sizeDelta = source.rectTransform.sizeDelta;
+
+        var popup = popupObject.AddComponent<TextMeshProUGUI>();
+        popup.font = source.font;
+        popup.fontSharedMaterial = source.fontSharedMaterial;
+        popup.fontSize = source.fontSize * 0.8f;
+        popup.alignment = TextAlignmentOptions.Center;
+        popup.raycastTarget = false;
+        popup.text = text;
+        popup.color = color;
+
+        StartCoroutine(AnimateDeltaPopup(popup));
+    }
+
+    private System.Collections.IEnumerator AnimateDeltaPopup(TextMeshProUGUI popup)
+    {
+        if (!popup) yield break;
+
+        var rect = popup.rectTransform;
+        Vector2 start = rect.anchoredPosition;
+        Vector2 end = start + new Vector2(0f, 20f);
+        Color startColor = popup.color;
+        const float duration = 0.75f;
+        float elapsed = 0f;
+
+        while (elapsed < duration && popup)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            rect.anchoredPosition = Vector2.Lerp(start, end, t);
+            popup.color = new Color(startColor.r, startColor.g, startColor.b, 1f - t);
+            yield return null;
+        }
+
+        if (popup)
+        {
+            Destroy(popup.gameObject);
+        }
     }
 }
