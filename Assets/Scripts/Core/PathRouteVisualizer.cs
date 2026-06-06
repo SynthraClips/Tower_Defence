@@ -8,11 +8,17 @@ public class PathRouteVisualizer : MonoBehaviour
     [SerializeField] private Color routeColor = new Color(0.16f, 0.55f, 0.82f, 0.85f);
     [SerializeField] private Color bankColor = new Color(0.08f, 0.28f, 0.42f, 0.9f);
     [SerializeField] private Color foamColor = new Color(0.8f, 0.95f, 1f, 0.65f);
+    [SerializeField] private Color spawnOuterColor = new Color(0.12f, 0.86f, 0.95f, 0.95f);
+    [SerializeField] private Color spawnInnerColor = new Color(0.9f, 1f, 1f, 0.95f);
+    [SerializeField] private Color waypointColor = new Color(0.72f, 0.9f, 1f, 0.45f);
     [SerializeField] private Color coreOuterColor = new Color(0.1f, 0.45f, 0.75f, 0.95f);
     [SerializeField] private Color coreInnerColor = new Color(0.9f, 0.98f, 1f, 0.95f);
     [SerializeField] private float routeWidth = 1.1f;
     [SerializeField] private float bankWidth = 1.35f;
     [SerializeField] private float foamWidth = 0.28f;
+    [SerializeField] private float spawnRadiusOuter = 0.75f;
+    [SerializeField] private float spawnRadiusInner = 0.35f;
+    [SerializeField] private float waypointMarkerRadius = 0.14f;
     [SerializeField] private float coreRadiusOuter = 0.9f;
     [SerializeField] private float coreRadiusInner = 0.5f;
     [SerializeField] private int bankSortingOrder = -4;
@@ -24,6 +30,9 @@ public class PathRouteVisualizer : MonoBehaviour
     private LineRenderer routeRenderer;
     private LineRenderer bankRenderer;
     private LineRenderer foamRenderer;
+    private LineRenderer waypointRenderer;
+    private LineRenderer spawnOuterRenderer;
+    private LineRenderer spawnInnerRenderer;
     private LineRenderer coreOuterRenderer;
     private LineRenderer coreInnerRenderer;
     private const int CircleSegments = 40;
@@ -61,7 +70,7 @@ public class PathRouteVisualizer : MonoBehaviour
         }
 
         EnsureVisualObjects();
-        if (!routeRenderer || !bankRenderer || !foamRenderer || !coreOuterRenderer || !coreInnerRenderer)
+        if (!routeRenderer || !bankRenderer || !foamRenderer || !waypointRenderer || !spawnOuterRenderer || !spawnInnerRenderer || !coreOuterRenderer || !coreInnerRenderer)
         {
             return;
         }
@@ -81,7 +90,11 @@ public class PathRouteVisualizer : MonoBehaviour
 
         if (cachedPath.Count > 0)
         {
+            Vector3 startPoint = cachedPath.GetWaypoint(0).position;
             Vector3 endPoint = cachedPath.GetWaypoint(cachedPath.Count - 1).position;
+            RebuildCircle(spawnOuterRenderer, startPoint, spawnRadiusOuter);
+            RebuildCircle(spawnInnerRenderer, startPoint, spawnRadiusInner);
+            RebuildWaypointMarkers(waypointRenderer);
             RebuildCircle(coreOuterRenderer, endPoint, coreRadiusOuter);
             RebuildCircle(coreInnerRenderer, endPoint, coreRadiusInner);
         }
@@ -92,12 +105,18 @@ public class PathRouteVisualizer : MonoBehaviour
         routeRenderer = routeRenderer ? routeRenderer : GetComponent<LineRenderer>();
         bankRenderer = bankRenderer ? bankRenderer : GetOrCreateChildRenderer("RouteBank");
         foamRenderer = foamRenderer ? foamRenderer : GetOrCreateChildRenderer("RouteFoam");
+        waypointRenderer = waypointRenderer ? waypointRenderer : GetOrCreateChildRenderer("RouteWaypoints");
+        spawnOuterRenderer = spawnOuterRenderer ? spawnOuterRenderer : GetOrCreateChildRenderer("SpawnOuter");
+        spawnInnerRenderer = spawnInnerRenderer ? spawnInnerRenderer : GetOrCreateChildRenderer("SpawnInner");
         coreOuterRenderer = coreOuterRenderer ? coreOuterRenderer : GetOrCreateChildRenderer("HarborCoreOuter");
         coreInnerRenderer = coreInnerRenderer ? coreInnerRenderer : GetOrCreateChildRenderer("HarborCoreInner");
 
         ConfigurePathRenderer(bankRenderer, bankWidth, bankColor, bankSortingOrder, false);
         ConfigurePathRenderer(routeRenderer, routeWidth, routeColor, routeSortingOrder, true);
         ConfigurePathRenderer(foamRenderer, foamWidth, foamColor, foamSortingOrder, false);
+        ConfigureCircleRenderer(waypointRenderer, waypointColor, foamSortingOrder + 1, 0.08f);
+        ConfigureCircleRenderer(spawnOuterRenderer, spawnOuterColor, foamSortingOrder + 2, 0.14f);
+        ConfigureCircleRenderer(spawnInnerRenderer, spawnInnerColor, foamSortingOrder + 3, 0.14f);
         ConfigureCircleRenderer(coreOuterRenderer, coreOuterColor, coreSortingOrder);
         ConfigureCircleRenderer(coreInnerRenderer, coreInnerColor, coreSortingOrder + 1);
     }
@@ -150,7 +169,7 @@ public class PathRouteVisualizer : MonoBehaviour
         }
     }
 
-    private void ConfigureCircleRenderer(LineRenderer renderer, Color color, int order)
+    private void ConfigureCircleRenderer(LineRenderer renderer, Color color, int order, float width = 0.12f)
     {
         if (!renderer) return;
 
@@ -158,8 +177,8 @@ public class PathRouteVisualizer : MonoBehaviour
         renderer.useWorldSpace = true;
         renderer.numCornerVertices = 4;
         renderer.numCapVertices = 4;
-        renderer.startWidth = 0.12f;
-        renderer.endWidth = 0.12f;
+        renderer.startWidth = width;
+        renderer.endWidth = width;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         renderer.sortingOrder = order;
@@ -170,6 +189,24 @@ public class PathRouteVisualizer : MonoBehaviour
         if (renderer.sharedMaterial == null && Shader.Find("Sprites/Default") != null)
         {
             renderer.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
+        }
+    }
+
+    private void RebuildWaypointMarkers(LineRenderer renderer)
+    {
+        if (!renderer || cachedPath == null || cachedPath.Count == 0) return;
+
+        renderer.positionCount = cachedPath.Count * CircleSegments;
+        for (int waypointIndex = 0; waypointIndex < cachedPath.Count; waypointIndex++)
+        {
+            var waypoint = cachedPath.GetWaypoint(waypointIndex);
+            Vector3 center = waypoint ? waypoint.position : transform.position;
+            for (int i = 0; i < CircleSegments; i++)
+            {
+                float t = i / (float)CircleSegments * Mathf.PI * 2f;
+                int index = waypointIndex * CircleSegments + i;
+                renderer.SetPosition(index, center + new Vector3(Mathf.Cos(t), Mathf.Sin(t), 0f) * waypointMarkerRadius);
+            }
         }
     }
 
