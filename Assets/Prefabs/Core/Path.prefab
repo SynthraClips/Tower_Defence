@@ -164,6 +164,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d5b5ae4a8034ce38a531f28b3f11dd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PathRouteVisualizer
+  waterSprite: {fileID: 6049605792901559095, guid: b8f5f9cb8b1fdf4479476efa4447db90, type: 3}
   routeColor: {r: 0.16, g: 0.55, b: 0.82, a: 0.85}
-  routeWidth: 0.9
-  sortingOrder: -2
+  bankColor: {r: 0.08, g: 0.28, b: 0.42, a: 0.9}
+  foamColor: {r: 0.8, g: 0.95, b: 1, a: 0.65}
+  coreOuterColor: {r: 0.1, g: 0.45, b: 0.75, a: 0.95}
+  coreInnerColor: {r: 0.9, g: 0.98, b: 1, a: 0.95}
+  routeWidth: 1.1
+  bankWidth: 1.35
+  foamWidth: 0.28
+  coreRadiusOuter: 0.9
+  coreRadiusInner: 0.5
+  bankSortingOrder: -4
+  routeSortingOrder: -3
+  foamSortingOrder: -2
+  coreSortingOrder: -1
