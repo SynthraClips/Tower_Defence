@@ -25,7 +25,7 @@ public class Path : MonoBehaviour
             waypoints.Add(transform.GetChild(i));
         }
 
-        if (waypoints.Count == 0)
+        if (waypoints.Count == 0 && Application.isPlaying && gameObject.scene.IsValid() && gameObject.scene.isLoaded)
         {
             Debug.LogWarning($"[Path] {name} does not contain any waypoint children.", this);
         }

@@ -56,7 +56,7 @@ public class BuildManager : MonoBehaviour
 
     public void CachePlacementSurfaces()
     {
-        var renderers = FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        var renderers = FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Exclude);
         var groundList = new System.Collections.Generic.List<SpriteRenderer>();
         var waterList = new System.Collections.Generic.List<SpriteRenderer>();
 

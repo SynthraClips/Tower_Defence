@@ -1,7 +1,6 @@
 using UnityEngine;
 
 [ExecuteAlways]
-[RequireComponent(typeof(Path))]
 public class PathRouteVisualizer : MonoBehaviour
 {
     [Header("Visuals")]
@@ -14,20 +13,17 @@ public class PathRouteVisualizer : MonoBehaviour
 
     private void Awake()
     {
-        EnsureRenderer();
         Rebuild();
     }
 
     private void OnEnable()
     {
-        EnsureRenderer();
         Rebuild();
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        EnsureRenderer();
         Rebuild();
     }
 #endif
@@ -35,32 +31,19 @@ public class PathRouteVisualizer : MonoBehaviour
     public void Rebuild()
     {
         cachedPath = cachedPath ? cachedPath : GetComponent<Path>();
-        if (!cachedPath)
+        routeRenderer = routeRenderer ? routeRenderer : GetComponent<LineRenderer>();
+
+        if (!cachedPath || !routeRenderer)
         {
             return;
         }
 
         cachedPath.RebuildFromChildren();
-        if (routeRenderer == null)
-        {
-            EnsureRenderer();
-        }
-
         routeRenderer.positionCount = cachedPath.Count;
         for (int i = 0; i < cachedPath.Count; i++)
         {
             var waypoint = cachedPath.GetWaypoint(i);
             routeRenderer.SetPosition(i, waypoint ? waypoint.position : transform.position);
-        }
-    }
-
-    private void EnsureRenderer()
-    {
-        cachedPath = cachedPath ? cachedPath : GetComponent<Path>();
-        routeRenderer = GetComponent<LineRenderer>();
-        if (!routeRenderer)
-        {
-            routeRenderer = gameObject.AddComponent<LineRenderer>();
         }
 
         routeRenderer.loop = false;
@@ -75,7 +58,7 @@ public class PathRouteVisualizer : MonoBehaviour
         routeRenderer.startColor = routeColor;
         routeRenderer.endColor = routeColor;
 
-        if (routeRenderer.sharedMaterial == null)
+        if (routeRenderer.sharedMaterial == null && Shader.Find("Sprites/Default") != null)
         {
             routeRenderer.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
         }

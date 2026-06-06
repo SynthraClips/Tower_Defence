@@ -40,21 +40,16 @@ These replace earlier assumptions about docks/platform-only placement.
 - [x] HUD wired for lives, gold, wave, game over, victory, and state text.
 - [x] Project-owned assets sorted into `Assets/Art`, `Assets/Audio`, and `Assets/Prefabs`.
 - [x] Build-node prototype created for the earlier dock/platform assumption.
+- [x] Build-node-only placement replaced with land / non-water tile validation.
+- [x] Temporary fixed build nodes removed from active gameplay scene roots.
+- [x] Waypoint-driven route presentation added via `PathRouteVisualizer`.
+- [x] Harbor scene logic now supports open land placement instead of dock-only placement.
 
 ### Done But Needs Rework
 
-- [ ] Build-node-only placement system
-  - Current state: prototype exists with `BuildNode` objects and node-based placement checks.
-  - Problem: this no longer matches the intended design.
-  - Replace with land-tile / non-water placement validation.
-
-- [ ] Temporary fixed build nodes in scenes
-  - Current state: `Easy Level` and `SampleScene` contain temporary `BuildNode_*` anchors.
-  - Problem: final design is free placement on any valid non-water tile.
-  - Action: remove or repurpose them after land-tile placement validation is live.
-
 - [ ] Harbor scene presentation pass
-  - Current state: placeholder map logic exists, but the scene direction still reflects the earlier node-placement assumption.
+  - Current state: path-driven route guidance is in place and open land placement is active.
+  - Remaining work: improve the visual identity so the route feels like stylized water tiles rather than just route markup.
   - Rework to support:
     - water route tiles from waypoints
     - open land placement
@@ -219,7 +214,7 @@ These replace earlier assumptions about docks/platform-only placement.
 - [x] Replace obsolete `FindObjectOfType` usage.
 - [x] Replace deprecated `Rigidbody2D.isKinematic`.
 - [x] Migrate gameplay input off the legacy Input Manager API.
-- [ ] Replace build-node placement with non-water-tile validation.
+- [x] Replace build-node placement with non-water-tile validation.
 - [ ] Add reusable feedback popup system for money and life deltas.
 - [ ] Consider scene-level manager bootstrap cleanup after gameplay loop stabilizes.
 - [ ] Re-run a full Unity editor validation pass after the placement refactor.
@@ -227,17 +222,16 @@ These replace earlier assumptions about docks/platform-only placement.
 ## Recommended Next Execution Order
 
 1. Replace build-node-only placement with non-water-tile placement.
-2. Remove or repurpose the temporary fixed build nodes in scenes.
-3. Add visible water route tiles based on waypoint flow.
-4. Add a simple harbor / base end-point visual.
-5. Re-theme the current towers into:
+2. Improve the route visual so it reads as actual water flow / route water.
+3. Add a simple harbor / base end-point visual.
+4. Re-theme the current towers into:
    - light
    - heavy
    - magic
    - air
-6. Add `-x` money and `-x` lives feedback popups.
-7. Rebalance the first five rounds around the new enemy ladder.
-8. Add enemy art / placeholder silhouettes and stronger route readability.
+5. Add `-x` money and `-x` lives feedback popups.
+6. Rebalance the first five rounds around the new enemy ladder.
+7. Add enemy art / placeholder silhouettes and stronger route readability.
 
 ## Notes
 
