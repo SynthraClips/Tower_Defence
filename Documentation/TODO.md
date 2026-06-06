@@ -51,19 +51,22 @@ Document:
 - [02-non-water-tile-placement-polish.md](./02-non-water-tile-placement-polish.md)
 
 Status:
-- `Mostly done`
+- `In progress`
 
 Done:
 - [x] old active build-node dependency removed from gameplay flow
 - [x] temporary `BuildNode_*` scene roots removed from active scenes
 - [x] placement now targets non-water gameplay space instead of fixed anchor nodes
 - [x] route corridor is used as the main no-build water exclusion
+- [x] map sprites are no longer the primary placement authority
+- [x] placement uses board/play-area bounds plus route exclusion
 - [x] placement uses the new Input System
 
 Still needed:
-- [ ] review edge-case placement failures around route width and collider overlap
+- [ ] review edge-case placement failures around route width and tower collider overlap
 - [ ] improve visual clarity for valid vs invalid placement
 - [ ] verify blocked/decorative land handling once the harbor scene visuals are improved
+- [ ] confirm placement behavior on all intended gameplay maps, not just the current test scene
 
 ### Goal 3 — Reusable Feedback Popup System
 
@@ -77,9 +80,11 @@ Done:
 - [x] spending gold triggers popup feedback
 - [x] losing lives triggers popup feedback
 - [x] popup animation / fade exists
+- [x] placement is connected to money-spent feedback
+- [x] end-of-path life loss is connected to life-loss feedback
 
 Still needed:
-- [ ] make the popup system explicitly reusable instead of HUD-local implementation
+- [ ] move the popup implementation out of `HUDController` into a reusable dedicated system
 - [ ] expose configurable duration, motion, and style more cleanly
 - [ ] optionally move relevant popups closer to the world event, not just HUD text anchors
 - [ ] support future reward / score / warning popups from the same system
