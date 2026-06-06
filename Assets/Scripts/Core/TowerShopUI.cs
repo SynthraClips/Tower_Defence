@@ -6,6 +6,16 @@ public class TowerShopUI : MonoBehaviour
     public Tower ballistaPrefab;
     public Tower cannonPrefab;
 
-    public void BuyBallista() { placer.BeginPlacement(ballistaPrefab); }
-    public void BuyCannon()   { placer.BeginPlacement(cannonPrefab); }
+    public void BuyBallista() { BuyLightAttack(); }
+    public void BuyCannon()   { BuyHeavyAttack(); }
+
+    public void BuyLightAttack()
+    {
+        placer.BeginPlacement(ballistaPrefab);
+    }
+
+    public void BuyHeavyAttack()
+    {
+        placer.BeginPlacement(cannonPrefab);
+    }
 }

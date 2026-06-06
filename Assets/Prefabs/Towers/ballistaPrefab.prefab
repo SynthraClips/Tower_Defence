@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallistaTower
   fireSfxKey: 3
+  towerDisplayName: Light Attack
+  towerArchetype: 0
   buildCost: 30
   targetType: 0
   range: 4

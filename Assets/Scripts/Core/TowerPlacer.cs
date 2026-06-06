@@ -14,7 +14,6 @@ public class TowerPlacer : MonoBehaviour
     private LineRenderer rangePreview;
     private bool    isPlacing;
     private int     cachedCost;
-    private BuildNode hoveredNode;
 
     private void Awake()
     {
@@ -37,21 +36,14 @@ public class TowerPlacer : MonoBehaviour
         if (!TryGetMouseWorldOnGround(out Vector3 posWorld)) return;
 
         if (build.snapToGrid) posWorld = BuildManager.Snap(posWorld, build.gridSize);
-        var previousNode = hoveredNode;
-        hoveredNode = build.requireBuildNodes ? build.GetBuildNodeAt(posWorld) : null;
-        if (previousNode && previousNode != hoveredNode)
-        {
-            previousNode.SetHighlightState(null);
-        }
 
         // Validate
-        bool ok = IsPlaceValid(posWorld);
-        hoveredNode?.SetHighlightState(ok);
+        bool ok = build != null && build.IsPlacementValid(posWorld);
 
         // Move ghost + color
         if (ghostInstance)
         {
-            ghostInstance.transform.position = hoveredNode ? hoveredNode.transform.position : posWorld;
+            ghostInstance.transform.position = posWorld;
             SetGhostColor(ok ? build.okColor : build.badColor);
             UpdateRangePreview(ghostInstance.range);
         }
@@ -61,7 +53,7 @@ public class TowerPlacer : MonoBehaviour
         {
             if (build.TrySpend(cachedCost))
             {
-                PlaceTower(hoveredNode ? hoveredNode.transform.position : posWorld, hoveredNode);
+                PlaceTower(posWorld);
                 EndPlacement(); // optional: end after one, or comment to keep placing
             }
             else
@@ -112,16 +104,14 @@ public class TowerPlacer : MonoBehaviour
     private void CancelPlacement()
     {
         isPlacing = false;
-        hoveredNode?.SetHighlightState(null);
         if (ghostInstance) Destroy(ghostInstance.gameObject);
         if (rangePreview) Destroy(rangePreview.gameObject);
         ghostInstance = null;
         rangePreview = null;
         ghostSprites = null;
-        hoveredNode = null;
     }
 
-    private void PlaceTower(Vector3 pos, BuildNode node)
+    private void PlaceTower(Vector3 pos)
     {
         // Re-enable components on a fresh instance so we don't carry ghost state
         var prefab = ghostInstance; // store to read which type we were placing
@@ -140,13 +130,6 @@ public class TowerPlacer : MonoBehaviour
         // Mark on Tower layer for blockers
         int towerLayer = LayerMask.NameToLayer("Tower");
         if (towerLayer >= 0) real.gameObject.layer = towerLayer;
-        if (node && !node.TryOccupy(real))
-        {
-            Destroy(real.gameObject);
-            GameManager.Instance?.AddGold(cachedCost);
-            Debug.LogWarning("[TowerPlacer] Build node became invalid before placement completed.");
-            return;
-        }
 
         Debug.Log($"Placed {scriptType.Name} at {pos} for {cachedCost} gold.");
     }
@@ -168,18 +151,6 @@ public class TowerPlacer : MonoBehaviour
 
         world = m;
         return true;
-    }
-
-    private bool IsPlaceValid(Vector3 pos)
-    {
-        if (build.requireBuildNodes)
-        {
-            return hoveredNode && hoveredNode.CanBuild;
-        }
-
-        // Check overlap with blocked layers
-        var hit = Physics2D.OverlapCircle(pos, build.minClearRadius, build.blockedLayers);
-        return hit == null;
     }
 
     private void SetGhostColor(Color c)

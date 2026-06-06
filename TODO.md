@@ -48,6 +48,11 @@ These replace earlier assumptions about docks/platform-only placement.
   - Problem: this no longer matches the intended design.
   - Replace with land-tile / non-water placement validation.
 
+- [ ] Temporary fixed build nodes in scenes
+  - Current state: `Easy Level` and `SampleScene` contain temporary `BuildNode_*` anchors.
+  - Problem: final design is free placement on any valid non-water tile.
+  - Action: remove or repurpose them after land-tile placement validation is live.
+
 - [ ] Harbor scene presentation pass
   - Current state: placeholder map logic exists, but the scene direction still reflects the earlier node-placement assumption.
   - Rework to support:
@@ -72,6 +77,7 @@ These replace earlier assumptions about docks/platform-only placement.
 
 - [ ] Finalize first boat classes:
   - [ ] Weak boat
+  - [ ] Extra-fast weak boat / raft variant if needed for pacing
   - [ ] Medium boat
   - [ ] Hard boat
   - [ ] Boss boat
@@ -102,6 +108,7 @@ These replace earlier assumptions about docks/platform-only placement.
   - [ ] upgrade path
   - [ ] cooldown
   - [ ] target preference hooks
+  - [ ] attack preference modes: close / weak / far
 - [ ] Make tower visuals clearly different even before final art exists.
 - [ ] Add placement on any valid non-water tile.
 - [ ] Remove dependency on fixed build nodes for core placement flow.
@@ -129,6 +136,10 @@ These replace earlier assumptions about docks/platform-only placement.
   - [ ] boss wave pressure
 - [ ] Define round structure more clearly:
   - [ ] total rounds
+  - [ ] first round: 10 weak enemies
+  - [ ] second round: 10 medium enemies
+  - [ ] each round increases enemy count
+  - [ ] end of round boss cadence
   - [ ] weak round introduction
   - [ ] medium round introduction
   - [ ] hard round introduction
@@ -148,6 +159,7 @@ These replace earlier assumptions about docks/platform-only placement.
   - [ ] round completion points
   - [ ] boss points
   - [ ] score / high score usage
+  - [ ] escaped enemy penalty points if that remains part of the design
 
 ## UI / UX
 
@@ -215,16 +227,17 @@ These replace earlier assumptions about docks/platform-only placement.
 ## Recommended Next Execution Order
 
 1. Replace build-node-only placement with non-water-tile placement.
-2. Add visible water route tiles based on waypoint flow.
-3. Add a simple harbor / base end-point visual.
-4. Re-theme the current towers into:
+2. Remove or repurpose the temporary fixed build nodes in scenes.
+3. Add visible water route tiles based on waypoint flow.
+4. Add a simple harbor / base end-point visual.
+5. Re-theme the current towers into:
    - light
    - heavy
    - magic
    - air
-5. Add `-x` money and `-x` lives feedback popups.
-6. Rebalance the first five rounds around the new enemy ladder.
-7. Add enemy art / placeholder silhouettes and stronger route readability.
+6. Add `-x` money and `-x` lives feedback popups.
+7. Rebalance the first five rounds around the new enemy ladder.
+8. Add enemy art / placeholder silhouettes and stronger route readability.
 
 ## Notes
 

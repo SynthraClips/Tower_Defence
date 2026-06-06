@@ -1,6 +1,7 @@
 using UnityEngine;
 
 public enum TowerTargetType { WaterOnly, AirOnly, Any }
+public enum TowerArchetype { Light, Heavy, Magic, Air }
 
 public abstract class Tower : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public abstract class Tower : MonoBehaviour
     [SerializeField] private SFX fireSfxKey = SFX.None;
 
     [Header("Build")]
+    public string towerDisplayName = "Tower";
+    public TowerArchetype towerArchetype = TowerArchetype.Light;
     public int buildCost = 30;
     [Range(0f, 1f)] public float sellRefundRatio = 0.7f;
     public TowerUpgradeLevel[] upgrades;

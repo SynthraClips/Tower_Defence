@@ -14,12 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemies:
   - tier: 1
-    count: 4
-    spawnInterval: 1.3
-  - tier: 2
-    count: 1
-    spawnInterval: 1.5
-  intermissionOverride: 5
+    count: 10
+    spawnInterval: 0.95
+  intermissionOverride: 4.5
   spawnBossAtEnd: 0
-  overrideWaveReward: 0
-  waveReward: 0
+  overrideWaveReward: 1
+  waveReward: 30

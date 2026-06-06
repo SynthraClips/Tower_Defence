@@ -93,6 +93,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CannonTower
   fireSfxKey: 1
+  towerDisplayName: Heavy Attack
+  towerArchetype: 1
   buildCost: 50
   targetType: 0
   range: 3.2

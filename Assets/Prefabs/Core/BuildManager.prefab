@@ -44,13 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d67cdae557e15a040b5b216f880ae507, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildManager
-  requireBuildNodes: 1
+  requireBuildNodes: 0
   buildNodeLayer:
     serializedVersion: 2
     m_Bits: 64
   placeableGround:
     serializedVersion: 2
     m_Bits: 64
+  waterLayers:
+    serializedVersion: 2
+    m_Bits: 16
   blockedLayers:
     serializedVersion: 2
     m_Bits: 392

@@ -13,13 +13,10 @@ MonoBehaviour:
   m_Name: W02_CutterEscort
   m_EditorClassIdentifier: 
   enemies:
-  - tier: 1
-    count: 5
-    spawnInterval: 1.15
   - tier: 2
-    count: 2
-    spawnInterval: 1.35
-  intermissionOverride: 5.5
+    count: 10
+    spawnInterval: 1
+  intermissionOverride: 5
   spawnBossAtEnd: 0
-  overrideWaveReward: 0
-  waveReward: 0
+  overrideWaveReward: 1
+  waveReward: 40
