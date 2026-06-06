@@ -21,6 +21,8 @@ public class BuildManager : MonoBehaviour
     [HideInInspector] public Tower towerToBuild; // selected prefab
     [HideInInspector] public Path activePath;
     private SpriteRenderer[] groundRenderers = System.Array.Empty<SpriteRenderer>();
+    private Bounds placementBounds;
+    private bool hasPlacementBounds;
 
     private void Awake()
     {
@@ -58,6 +60,7 @@ public class BuildManager : MonoBehaviour
     {
         var renderers = FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Exclude);
         var groundList = new System.Collections.Generic.List<SpriteRenderer>();
+        hasPlacementBounds = false;
 
         foreach (var renderer in renderers)
         {
@@ -67,6 +70,7 @@ public class BuildManager : MonoBehaviour
             if ((placeableGround.value & layerMask) != 0)
             {
                 groundList.Add(renderer);
+                EncapsulatePlacementBounds(renderer.bounds);
             }
         }
 
@@ -75,71 +79,12 @@ public class BuildManager : MonoBehaviour
 
     private bool IsOnBuildableGround(Vector3 position)
     {
-        if (groundRenderers.Length == 0)
+        if (!hasPlacementBounds)
         {
             CachePlacementSurfaces();
         }
 
-        foreach (var renderer in groundRenderers)
-        {
-            if (RendererContainsOpaquePixel(renderer, position))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool RendererContainsOpaquePixel(SpriteRenderer renderer, Vector3 worldPosition)
-    {
-        if (!renderer || !renderer.enabled || renderer.sprite == null)
-        {
-            return false;
-        }
-
-        if (!renderer.bounds.Contains(worldPosition))
-        {
-            return false;
-        }
-
-        var sprite = renderer.sprite;
-        var texture = sprite.texture;
-        if (texture == null)
-        {
-            return false;
-        }
-
-        if (!texture.isReadable)
-        {
-            return true;
-        }
-
-        Vector3 local = renderer.transform.InverseTransformPoint(worldPosition);
-        float pixelsPerUnit = sprite.pixelsPerUnit;
-        Vector2 pivot = sprite.pivot;
-
-        float pixelX = local.x * pixelsPerUnit + pivot.x;
-        float pixelY = local.y * pixelsPerUnit + pivot.y;
-
-        if (renderer.flipX)
-        {
-            pixelX = sprite.rect.width - pixelX;
-        }
-
-        if (renderer.flipY)
-        {
-            pixelY = sprite.rect.height - pixelY;
-        }
-
-        if (pixelX < 0 || pixelY < 0 || pixelX >= sprite.rect.width || pixelY >= sprite.rect.height)
-        {
-            return false;
-        }
-
-        int textureX = Mathf.FloorToInt(sprite.rect.x + pixelX);
-        int textureY = Mathf.FloorToInt(sprite.rect.y + pixelY);
-        return texture.GetPixel(textureX, textureY).a > 0.1f;
+        return hasPlacementBounds && placementBounds.Contains(position);
     }
 
     private bool IsOnWater(Vector3 position)
@@ -168,6 +113,19 @@ public class BuildManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void EncapsulatePlacementBounds(Bounds rendererBounds)
+    {
+        if (!hasPlacementBounds)
+        {
+            placementBounds = rendererBounds;
+            hasPlacementBounds = true;
+            return;
+        }
+
+        placementBounds.Encapsulate(rendererBounds.min);
+        placementBounds.Encapsulate(rendererBounds.max);
     }
 
     private static float DistancePointToSegment(Vector2 point, Vector2 segmentStart, Vector2 segmentEnd)
