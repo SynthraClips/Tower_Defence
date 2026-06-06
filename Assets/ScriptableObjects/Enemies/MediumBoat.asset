@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e399520c8f4d83904b8576077f2d93, type: 3}
+  m_Name: MediumBoat
+  m_EditorClassIdentifier: 
+  displayName: Medium Boat
+  moveSpeed: 1.3
+  maxHealth: 45
+  damageToBase: 1
+  goldReward: 9
+  flatArmor: 1
+  siegeDamageMultiplier: 1.1
+  arcaneDamageMultiplier: 1
+  airburstDamageMultiplier: 1
+  tint: {r: 0.97, g: 0.9, b: 0.55, a: 1}
+  scale: {x: 1, y: 1, z: 1}
+  isFastWeakVariant: 0

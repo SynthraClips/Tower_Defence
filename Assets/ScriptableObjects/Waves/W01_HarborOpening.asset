@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: W01_HarborOpening
   m_EditorClassIdentifier: 
   enemies:
-  - tier: 1
+  - definition: {fileID: 11400000, guid: 9a6fe62e594848d69d84f38630beccf5, type: 2}
     count: 10
     spawnInterval: 0.95
   intermissionOverride: 4.5

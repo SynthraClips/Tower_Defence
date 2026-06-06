@@ -6,6 +6,8 @@ public class MagicTower : Tower
     {
         towerDisplayName = "Magic Attack";
         towerArchetype = TowerArchetype.Magic;
+        damageType = DamageType.Arcane;
+        attackPreferenceMode = AttackPreferenceMode.Weak;
         targetType = TowerTargetType.WaterOnly;
         range = 3.8f;
         shotsPerSecond = 1.1f;

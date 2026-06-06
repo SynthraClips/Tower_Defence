@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: W02_CutterEscort
   m_EditorClassIdentifier: 
   enemies:
-  - tier: 2
+  - definition: {fileID: 11400000, guid: a2389384641b4195a8630efe3da46ad1, type: 2}
     count: 10
     spawnInterval: 1
   intermissionOverride: 5

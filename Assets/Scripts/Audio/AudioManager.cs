@@ -75,6 +75,10 @@ public class AudioManager : MonoBehaviour
         {
             sfxSource.PlayOneShot(clip);
         }
+        else if (TryResolveFallback(key, out clip) && clip)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
         else
         {
             Debug.LogWarning($"[AudioManager] No clip assigned for {key}");
@@ -88,4 +92,30 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
     public void StopMusic() => musicSource.Stop();
+
+    private bool TryResolveFallback(SFX requested, out AudioClip clip)
+    {
+        clip = requested switch
+        {
+            SFX.PlaceTower => GetClipOrNull(SFX.Click),
+            SFX.MagicFire => GetClipOrNull(SFX.Ballista),
+            SFX.AirFire => GetClipOrNull(SFX.Cannon),
+            SFX.BoatHit => GetClipOrNull(SFX.Impact),
+            SFX.BoatDeath => GetClipOrNull(SFX.Impact),
+            SFX.WaterSplash => GetClipOrNull(SFX.Impact),
+            SFX.BaseHit => GetClipOrNull(SFX.Impact),
+            SFX.RoundStart => GetClipOrNull(SFX.Click),
+            SFX.RoundComplete => GetClipOrNull(SFX.Click),
+            SFX.BossSpawn => GetClipOrNull(SFX.Cannon),
+            _ => null
+        };
+
+        return clip != null;
+    }
+
+    private AudioClip GetClipOrNull(SFX key)
+    {
+        sfxDict.TryGetValue(key, out var clip);
+        return clip;
+    }
 }

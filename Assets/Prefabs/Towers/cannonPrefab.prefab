@@ -95,6 +95,8 @@ MonoBehaviour:
   fireSfxKey: 1
   towerDisplayName: Heavy Attack
   towerArchetype: 1
+  damageType: 1
+  attackPreferenceMode: 2
   buildCost: 50
   targetType: 0
   range: 3.2

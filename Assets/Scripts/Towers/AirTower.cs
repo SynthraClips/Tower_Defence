@@ -6,6 +6,8 @@ public class AirTower : Tower
     {
         towerDisplayName = "Air Attack";
         towerArchetype = TowerArchetype.Air;
+        damageType = DamageType.Airburst;
+        attackPreferenceMode = AttackPreferenceMode.Far;
         targetType = TowerTargetType.AirOnly;
         range = 4.5f;
         shotsPerSecond = 1.25f;

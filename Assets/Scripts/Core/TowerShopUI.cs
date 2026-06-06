@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TowerShopUI : MonoBehaviour
 {
@@ -29,5 +30,15 @@ public class TowerShopUI : MonoBehaviour
     public void BuyAirAttack()
     {
         if (airPrefab) placer.BeginPlacement(airPrefab);
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current == null) return;
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame) BuyLightAttack();
+        if (Keyboard.current.digit2Key.wasPressedThisFrame) BuyHeavyAttack();
+        if (Keyboard.current.digit3Key.wasPressedThisFrame) BuyMagicAttack();
+        if (Keyboard.current.digit4Key.wasPressedThisFrame) BuyAirAttack();
     }
 }

@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: W03_FrigatePush
   m_EditorClassIdentifier: 
   enemies:
-  - tier: 1
-    count: 8
-    spawnInterval: 0.9
-  - tier: 2
+  - definition: {fileID: 11400000, guid: 885cbf5461e349ed928e80e4ca6457cd, type: 2}
+    count: 10
+    spawnInterval: 0.7
+  - definition: {fileID: 11400000, guid: a2389384641b4195a8630efe3da46ad1, type: 2}
     count: 4
-    spawnInterval: 1
+    spawnInterval: 0.95
   intermissionOverride: 6
   spawnBossAtEnd: 0
   overrideWaveReward: 1
-  waveReward: 50
+  waveReward: 55

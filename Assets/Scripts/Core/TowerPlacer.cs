@@ -14,6 +14,7 @@ public class TowerPlacer : MonoBehaviour
     private LineRenderer rangePreview;
     private bool    isPlacing;
     private int     cachedCost;
+    private PlacementValidationResult lastValidationResult = PlacementValidationResult.OutOfBounds;
 
     private void Awake()
     {
@@ -38,7 +39,10 @@ public class TowerPlacer : MonoBehaviour
         if (build.snapToGrid) posWorld = BuildManager.Snap(posWorld, build.gridSize);
 
         // Validate
-        bool ok = build != null && build.IsPlacementValid(posWorld);
+        lastValidationResult = build != null
+            ? build.ValidatePlacement(posWorld)
+            : PlacementValidationResult.OutOfBounds;
+        bool ok = lastValidationResult == PlacementValidationResult.Valid;
 
         // Move ghost + color
         if (ghostInstance)
@@ -60,6 +64,10 @@ public class TowerPlacer : MonoBehaviour
             {
                 Debug.Log("Not enough gold.");
             }
+        }
+        else if (!ok && WasLeftMousePressedThisFrame())
+        {
+            Debug.Log($"Cannot place tower here: {lastValidationResult}.");
         }
     }
 
@@ -109,6 +117,7 @@ public class TowerPlacer : MonoBehaviour
         ghostInstance = null;
         rangePreview = null;
         ghostSprites = null;
+        lastValidationResult = PlacementValidationResult.OutOfBounds;
     }
 
     private void PlaceTower(Vector3 pos)

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1874503507995934499}
   - component: {fileID: 4075968886702809088}
   m_Layer: 0
-  m_Name: ballistaPrefab
+  m_Name: magicPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,24 +43,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 2854398883746930889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6b3bb5632a51c46858cab764cf5e71, type: 3}
+  m_Script: {fileID: 11500000, guid: 12ea8ac70894470ebd633ed527fbd04b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BallistaTower
-  fireSfxKey: 3
-  towerDisplayName: Light Attack
-  towerArchetype: 0
-  damageType: 0
-  attackPreferenceMode: 0
-  buildCost: 30
+  m_EditorClassIdentifier: Assembly-CSharp::MagicTower
+  fireSfxKey: 6
+  towerDisplayName: Magic Attack
+  towerArchetype: 2
+  damageType: 2
+  attackPreferenceMode: 1
+  buildCost: 45
   targetType: 0
-  range: 4
+  range: 3.8
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
   rotatingPart: {fileID: 8389626519971656279}
   firePoint: {fileID: 4262344853815144694}
-  projectilePrefab: {fileID: 7298633409152146585, guid: a2dac3970b17e504caee113b9fc45082, type: 3}
-  shotsPerSecond: 1.5
+  projectilePrefab: {fileID: 7298633409152146585, guid: 60f98b2a6b4647f0b5c6e8f8848c143d, type: 3}
+  shotsPerSecond: 1.1
 --- !u!61 &4075968886702809088
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -218,7 +218,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 4585184903028488917, guid: fa9e791cd1259aa4592df9c42e8d4045, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.72, g: 0.6, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 1
   m_DrawMode: 0

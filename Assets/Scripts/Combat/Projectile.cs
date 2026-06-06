@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     public float speed = 10f;
     public int damage = 10;
     public float lifetime = 4f;
+    public DamageType damageType = DamageType.Physical;
 
     [Header("Splash (optional)")]
     public bool splashDamage = false;
@@ -72,13 +73,13 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-		AudioManager.Instance?.PlaySFX(SFX.Impact);
         var e = other.GetComponent<Enemy>();
         if (e == null) return;
 
         if (!splashDamage)
         {
-            e.TakeDamage(damage);
+            e.TakeDamage(damage, damageType);
+            PlayImpactSfx(false);
         }
         else
         {
@@ -87,11 +88,24 @@ public class Projectile : MonoBehaviour
             foreach (var h in hits)
             {
                 var enemy = h.GetComponent<Enemy>();
-                if (enemy) enemy.TakeDamage(damage);
+                if (enemy) enemy.TakeDamage(damage, damageType);
             }
+
+            FloatingPopupSystem.Instance.ShowWorldPopup(
+                transform.position,
+                "Splash",
+                new Color(0.6f, 0.92f, 1f, 1f),
+                Camera.main,
+                0.4f);
+            PlayImpactSfx(true);
         }
 
         SelfDestruct();
+    }
+
+    private void PlayImpactSfx(bool usedSplash)
+    {
+        AudioManager.Instance?.PlaySFX(usedSplash ? SFX.WaterSplash : SFX.Impact);
     }
 
     private void SelfDestruct()

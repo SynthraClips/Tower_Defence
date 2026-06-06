@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: W04_MixedConvoy
   m_EditorClassIdentifier: 
   enemies:
-  - tier: 2
-    count: 8
-    spawnInterval: 0.95
-  - tier: 3
+  - definition: {fileID: 11400000, guid: 885cbf5461e349ed928e80e4ca6457cd, type: 2}
     count: 4
-    spawnInterval: 1.35
+    spawnInterval: 0.65
+  - definition: {fileID: 11400000, guid: a2389384641b4195a8630efe3da46ad1, type: 2}
+    count: 8
+    spawnInterval: 0.9
+  - definition: {fileID: 11400000, guid: 6f4d97ad52ca49589270d9eb17decc89, type: 2}
+    count: 4
+    spawnInterval: 1.2
   intermissionOverride: 6.5
   spawnBossAtEnd: 0
   overrideWaveReward: 1
-  waveReward: 60
+  waveReward: 68

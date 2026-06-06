@@ -6,6 +6,7 @@ public class Main : MonoBehaviour
     public GameManager gameManager;
     public Spawner spawner;
     public Path path;
+    public BuildManager buildManager;
 
     [Header("Legacy Waves")]
     public Spawner.Wave[] waves;
@@ -13,11 +14,16 @@ public class Main : MonoBehaviour
     [Header("Data-Driven Waves")]
     public WaveDefinition[] waveDefinitions;
 
+    [Header("Level Template")]
+    public LevelDefinition levelDefinition;
+    public bool autoStartOnSceneLoad = true;
+
     private void Awake()
     {
         if (!gameManager) gameManager = FindAnyObjectByType<GameManager>();
         if (!spawner)     spawner     = FindAnyObjectByType<Spawner>();
         if (!path)        path        = FindAnyObjectByType<Path>();
+        if (!buildManager) buildManager = FindAnyObjectByType<BuildManager>();
     }
 
     private void Start()
@@ -38,6 +44,20 @@ public class Main : MonoBehaviour
 
         // Hand off scene references:
         spawner.path = path;
+        ApplyLevelDefinition();
+
+        if (autoStartOnSceneLoad)
+        {
+            BeginConfiguredRun();
+        }
+    }
+
+    public void BeginConfiguredRun()
+    {
+        if (spawner == null)
+        {
+            return;
+        }
 
         if (waveDefinitions != null && waveDefinitions.Length > 0)
         {
@@ -46,6 +66,28 @@ public class Main : MonoBehaviour
         else
         {
             spawner.Begin(waves);
+        }
+    }
+
+    private void ApplyLevelDefinition()
+    {
+        if (!levelDefinition)
+        {
+            return;
+        }
+
+        if (buildManager)
+        {
+            buildManager.useManualPlacementBounds = levelDefinition.useManualPlacementBounds;
+            buildManager.placementBoundsCenter = levelDefinition.placementBoundsCenter;
+            buildManager.placementBoundsSize = levelDefinition.placementBoundsSize;
+            buildManager.waterRouteWidth = levelDefinition.waterRouteWidth;
+            buildManager.CachePlacementBounds();
+        }
+
+        if (levelDefinition.waveDefinitions != null && levelDefinition.waveDefinitions.Length > 0)
+        {
+            waveDefinitions = levelDefinition.waveDefinitions;
         }
     }
 }

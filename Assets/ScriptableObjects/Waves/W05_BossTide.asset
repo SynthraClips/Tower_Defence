@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: W05_BossTide
   m_EditorClassIdentifier: 
   enemies:
-  - tier: 1
-    count: 6
-    spawnInterval: 0.85
-  - tier: 2
-    count: 6
-    spawnInterval: 0.95
-  - tier: 3
-    count: 3
-    spawnInterval: 1.25
+  - definition: {fileID: 11400000, guid: 9a6fe62e594848d69d84f38630beccf5, type: 2}
+    count: 8
+    spawnInterval: 0.8
+  - definition: {fileID: 11400000, guid: a2389384641b4195a8630efe3da46ad1, type: 2}
+    count: 8
+    spawnInterval: 0.9
+  - definition: {fileID: 11400000, guid: 6f4d97ad52ca49589270d9eb17decc89, type: 2}
+    count: 4
+    spawnInterval: 1.1
   intermissionOverride: 7
   spawnBossAtEnd: 1
   overrideWaveReward: 1
-  waveReward: 75
+  waveReward: 90

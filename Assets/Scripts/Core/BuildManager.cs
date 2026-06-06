@@ -1,5 +1,14 @@
 using UnityEngine;
 
+public enum PlacementValidationResult
+{
+    Valid,
+    MissingBuildNode,
+    OccupiedOrBlocked,
+    OutOfBounds,
+    OnWaterRoute,
+}
+
 public class BuildManager : MonoBehaviour
 {
     public static BuildManager Instance { get; private set; }
@@ -7,28 +16,37 @@ public class BuildManager : MonoBehaviour
     [Header("Placement")]
     public bool requireBuildNodes = false;
     public LayerMask buildNodeLayer;
-    public LayerMask placeableGround;   // e.g. "Ground"
-    public LayerMask blockedLayers;     // e.g. "NoBuild" | "Enemy" | "Tower"
-    public float   minClearRadius = 0.35f; // no overlap radius check
-    public bool    snapToGrid = true;
-    public float   gridSize = 0.5f;
+    public LayerMask blockedLayers;
+    public float minClearRadius = 0.35f;
+    public bool snapToGrid = true;
+    public float gridSize = 0.5f;
     [Min(0.1f)] public float waterRouteWidth = 1.15f;
 
-    [Header("Ghost")]
-    public Color okColor   = new Color(0.6f, 1f, 0.6f, 0.6f);
-    public Color badColor  = new Color(1f, 0.5f, 0.5f, 0.6f);
+    [Header("Board Area")]
+    public bool useManualPlacementBounds = false;
+    public Vector2 placementBoundsCenter = Vector2.zero;
+    public Vector2 placementBoundsSize = new Vector2(18f, 12f);
 
-    [HideInInspector] public Tower towerToBuild; // selected prefab
+    [Header("Ghost")]
+    public Color okColor = new Color(0.6f, 1f, 0.6f, 0.6f);
+    public Color badColor = new Color(1f, 0.5f, 0.5f, 0.6f);
+
+    [HideInInspector] public Tower towerToBuild;
     [HideInInspector] public Path activePath;
-    private SpriteRenderer[] groundRenderers = System.Array.Empty<SpriteRenderer>();
+
     private Bounds placementBounds;
     private bool hasPlacementBounds;
 
     private void Awake()
     {
-        if (Instance && Instance != this) { Destroy(gameObject); return; }
+        if (Instance && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
-        CachePlacementSurfaces();
+        CachePlacementBounds();
     }
 
     public bool TrySpend(int cost) => GameManager.Instance && GameManager.Instance.SpendGold(cost);
@@ -41,53 +59,94 @@ public class BuildManager : MonoBehaviour
 
     public bool IsPlacementValid(Vector3 position)
     {
+        return ValidatePlacement(position) == PlacementValidationResult.Valid;
+    }
+
+    public PlacementValidationResult ValidatePlacement(Vector3 position)
+    {
         if (requireBuildNodes)
         {
             var node = GetBuildNodeAt(position);
-            return node && node.CanBuild;
+            return node && node.CanBuild
+                ? PlacementValidationResult.Valid
+                : PlacementValidationResult.MissingBuildNode;
         }
 
-        if (!IsOnBuildableGround(position) || IsOnWater(position))
+        if (!IsInsidePlacementBounds(position))
         {
-            return false;
+            return PlacementValidationResult.OutOfBounds;
+        }
+
+        if (IsOnWaterRoute(position))
+        {
+            return PlacementValidationResult.OnWaterRoute;
         }
 
         var hit = Physics2D.OverlapCircle(position, minClearRadius, blockedLayers);
-        return hit == null;
+        return hit == null
+            ? PlacementValidationResult.Valid
+            : PlacementValidationResult.OccupiedOrBlocked;
     }
 
-    public void CachePlacementSurfaces()
+    public void CachePlacementBounds()
     {
-        var renderers = FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Exclude);
-        var groundList = new System.Collections.Generic.List<SpriteRenderer>();
         hasPlacementBounds = false;
 
-        foreach (var renderer in renderers)
+        if (useManualPlacementBounds)
         {
-            if (!renderer || !renderer.enabled) continue;
-
-            int layerMask = 1 << renderer.gameObject.layer;
-            if ((placeableGround.value & layerMask) != 0)
-            {
-                groundList.Add(renderer);
-                EncapsulatePlacementBounds(renderer.bounds);
-            }
+            placementBounds = new Bounds(placementBoundsCenter, placementBoundsSize);
+            hasPlacementBounds = true;
+            return;
         }
 
-        groundRenderers = groundList.ToArray();
+        if (!activePath)
+        {
+            activePath = FindAnyObjectByType<Path>();
+        }
+
+        if (activePath && activePath.Count > 0)
+        {
+            Vector3 min = activePath.GetWaypoint(0).position;
+            Vector3 max = min;
+
+            for (int i = 1; i < activePath.Count; i++)
+            {
+                var waypoint = activePath.GetWaypoint(i);
+                if (!waypoint) continue;
+                min = Vector3.Min(min, waypoint.position);
+                max = Vector3.Max(max, waypoint.position);
+            }
+
+            min += new Vector3(-4.5f, -3.5f, 0f);
+            max += new Vector3(4.5f, 3.5f, 0f);
+            placementBounds = new Bounds((min + max) * 0.5f, max - min);
+            hasPlacementBounds = true;
+            return;
+        }
+
+        var fallbackCamera = Camera.main;
+        if (fallbackCamera && fallbackCamera.orthographic)
+        {
+            float height = fallbackCamera.orthographicSize * 2f;
+            float width = height * fallbackCamera.aspect;
+            placementBounds = new Bounds(
+                new Vector3(fallbackCamera.transform.position.x, fallbackCamera.transform.position.y, 0f),
+                new Vector3(width, height, 0f));
+            hasPlacementBounds = true;
+        }
     }
 
-    private bool IsOnBuildableGround(Vector3 position)
+    private bool IsInsidePlacementBounds(Vector3 position)
     {
         if (!hasPlacementBounds)
         {
-            CachePlacementSurfaces();
+            CachePlacementBounds();
         }
 
         return hasPlacementBounds && placementBounds.Contains(position);
     }
 
-    private bool IsOnWater(Vector3 position)
+    private bool IsOnWaterRoute(Vector3 position)
     {
         if (!activePath)
         {
@@ -113,19 +172,6 @@ public class BuildManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    private void EncapsulatePlacementBounds(Bounds rendererBounds)
-    {
-        if (!hasPlacementBounds)
-        {
-            placementBounds = rendererBounds;
-            hasPlacementBounds = true;
-            return;
-        }
-
-        placementBounds.Encapsulate(rendererBounds.min);
-        placementBounds.Encapsulate(rendererBounds.max);
     }
 
     private static float DistancePointToSegment(Vector2 point, Vector2 segmentStart, Vector2 segmentEnd)

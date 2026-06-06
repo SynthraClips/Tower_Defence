@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public struct EnemySpawnEntry
 {
-    public BoatTier tier;
+    public BoatEnemyDefinition definition;
     [Min(0)] public int count;
     [Min(0.05f)] public float spawnInterval;
 }

@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -15,6 +17,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("Player Stats")]
+    public int startingLives = 20;
+    public int startingGold = 100;
     public int lives = 20;
     public int gold = 100;
 
@@ -53,12 +57,39 @@ public class GameManager : MonoBehaviour
         OnWaveChanged?.Invoke(currentWave, totalWaves);
     }
 
+    private void Update()
+    {
+        if (Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            TogglePause();
+        }
+
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            RestartCurrentScene();
+        }
+
+        if (Keyboard.current.mKey.wasPressedThisFrame)
+        {
+            ReturnToMainMenu();
+        }
+    }
+
     public void StartRun(int waveCount)
     {
         totalWaves = Mathf.Max(0, waveCount);
         currentWave = 0;
+        lives = Mathf.Max(1, startingLives);
+        gold = Mathf.Max(0, startingGold);
         Time.timeScale = 1f;
         ChangeState(GameState.Running);
+        OnLivesChanged?.Invoke(lives);
+        OnGoldChanged?.Invoke(gold);
         OnWaveChanged?.Invoke(currentWave, totalWaves);
     }
 
@@ -80,6 +111,32 @@ public class GameManager : MonoBehaviour
         if (state != GameState.Paused) return;
         Time.timeScale = 1f;
         ChangeState(GameState.Running);
+    }
+
+    public void TogglePause()
+    {
+        if (state == GameState.Paused)
+        {
+            ResumeGame();
+        }
+        else if (state == GameState.Running)
+        {
+            PauseGame();
+        }
+    }
+
+    public void RestartCurrentScene()
+    {
+        Time.timeScale = 1f;
+        ChangeState(GameState.Booting);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ReturnToMainMenu()
+    {
+        Time.timeScale = 1f;
+        ChangeState(GameState.Booting);
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void AddGold(int amount)

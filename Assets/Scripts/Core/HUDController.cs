@@ -15,7 +15,6 @@ public class HUDController : MonoBehaviour
     [Header("Feedback")]
     [SerializeField] private Color spentColor = new Color(1f, 0.45f, 0.45f, 1f);
     [SerializeField] private Color lostColor = new Color(1f, 0.35f, 0.35f, 1f);
-    [SerializeField] private Vector2 feedbackOffset = new Vector2(0f, 30f);
 
     [Header("Refs")]
     public GameManager gm;
@@ -93,7 +92,7 @@ public class HUDController : MonoBehaviour
         if (gameOverText)
         {
             gameOverText.gameObject.SetActive(true);
-            gameOverText.text = "GAME OVER!";
+            gameOverText.text = "GAME OVER!\nR restart  M menu";
         }
     }
 
@@ -102,14 +101,21 @@ public class HUDController : MonoBehaviour
         if (victoryText)
         {
             victoryText.gameObject.SetActive(true);
-            victoryText.text = "VICTORY!";
+            victoryText.text = "VICTORY!\nR restart  M menu";
         }
     }
 
     private void UpdateState(GameState state)
     {
         if (!stateText) return;
-        stateText.text = $"State: {state}";
+        stateText.text = state switch
+        {
+            GameState.Running => "State: Running   P pause   R restart",
+            GameState.Paused => "State: Paused   P resume   R restart",
+            GameState.Victory => "State: Victory",
+            GameState.Defeat => "State: Defeat",
+            _ => $"State: {state}",
+        };
     }
 
     private void UpdateLives(int v)
@@ -149,63 +155,11 @@ public class HUDController : MonoBehaviour
 
     private void ShowGoldSpent(int amount)
     {
-        ShowDeltaPopup(goldText, $"-{amount}", spentColor);
+        FloatingPopupSystem.Instance.ShowUiPopup(goldText, $"-{amount}", spentColor);
     }
 
     private void ShowLivesLost(int amount)
     {
-        ShowDeltaPopup(livesText, $"-{amount}", lostColor);
-    }
-
-    private void ShowDeltaPopup(TextMeshProUGUI source, string text, Color color)
-    {
-        if (!source || !source.transform.parent) return;
-
-        var popupObject = new GameObject($"{source.name}_Delta");
-        popupObject.transform.SetParent(source.transform.parent, false);
-
-        var popupTransform = popupObject.AddComponent<RectTransform>();
-        popupTransform.anchorMin = source.rectTransform.anchorMin;
-        popupTransform.anchorMax = source.rectTransform.anchorMax;
-        popupTransform.pivot = source.rectTransform.pivot;
-        popupTransform.anchoredPosition = source.rectTransform.anchoredPosition + feedbackOffset;
-        popupTransform.sizeDelta = source.rectTransform.sizeDelta;
-
-        var popup = popupObject.AddComponent<TextMeshProUGUI>();
-        popup.font = source.font;
-        popup.fontSharedMaterial = source.fontSharedMaterial;
-        popup.fontSize = source.fontSize * 0.8f;
-        popup.alignment = TextAlignmentOptions.Center;
-        popup.raycastTarget = false;
-        popup.text = text;
-        popup.color = color;
-
-        StartCoroutine(AnimateDeltaPopup(popup));
-    }
-
-    private System.Collections.IEnumerator AnimateDeltaPopup(TextMeshProUGUI popup)
-    {
-        if (!popup) yield break;
-
-        var rect = popup.rectTransform;
-        Vector2 start = rect.anchoredPosition;
-        Vector2 end = start + new Vector2(0f, 20f);
-        Color startColor = popup.color;
-        const float duration = 0.75f;
-        float elapsed = 0f;
-
-        while (elapsed < duration && popup)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            rect.anchoredPosition = Vector2.Lerp(start, end, t);
-            popup.color = new Color(startColor.r, startColor.g, startColor.b, 1f - t);
-            yield return null;
-        }
-
-        if (popup)
-        {
-            Destroy(popup.gameObject);
-        }
+        FloatingPopupSystem.Instance.ShowUiPopup(livesText, $"-{amount}", lostColor);
     }
 }

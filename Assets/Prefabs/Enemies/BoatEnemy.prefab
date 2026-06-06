@@ -185,3 +185,4 @@ MonoBehaviour:
   goldReward: 5
   path: {fileID: 0}
   tier: 1
+  spriteRenderer: {fileID: 4020805344340980514}

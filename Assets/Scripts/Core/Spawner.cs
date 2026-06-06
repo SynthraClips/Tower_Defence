@@ -17,6 +17,11 @@ public class Spawner : MonoBehaviour
     public Path path;
     public BoatEnemy boatPrefab;
     public WaveDefinition[] waveDefinitions;
+    public BoatEnemyDefinition weakBoatDefinition;
+    public BoatEnemyDefinition mediumBoatDefinition;
+    public BoatEnemyDefinition hardBoatDefinition;
+    public BoatEnemyDefinition swiftBoatDefinition;
+    public BoatEnemyDefinition bossBoatDefinition;
 
     [Header("Timing")]
     public float timeBetweenWaves = 6f;
@@ -168,6 +173,7 @@ public class Spawner : MonoBehaviour
 
             GameManager.Instance?.SetCurrentWave(CurrentWaveIndex);
             OnWaveStarted?.Invoke(CurrentWaveIndex, TotalWaves);
+            AudioManager.Instance?.PlaySFX(SFX.RoundStart);
 
             bool isBossWave =
                 bossOverrideResolver(waveIndex) ||
@@ -203,6 +209,7 @@ public class Spawner : MonoBehaviour
 
             GameManager.Instance?.AddGold(reward);
             OnWaveCompleted?.Invoke(CurrentWaveIndex, reward);
+            AudioManager.Instance?.PlaySFX(SFX.RoundComplete);
 
             if (waveIndex < waveCount - 1)
             {
@@ -218,19 +225,19 @@ public class Spawner : MonoBehaviour
     {
         for (int i = 0; i < wave.tier1; i++)
         {
-            Spawn(BoatTier.Skiff);
+            Spawn(weakBoatDefinition, BoatTier.Weak);
             yield return new WaitForSeconds(Mathf.Max(0.05f, wave.spawnInterval));
         }
 
         for (int i = 0; i < wave.tier2; i++)
         {
-            Spawn(BoatTier.Cutter);
+            Spawn(mediumBoatDefinition, BoatTier.Medium);
             yield return new WaitForSeconds(Mathf.Max(0.05f, wave.spawnInterval));
         }
 
         for (int i = 0; i < wave.tier3; i++)
         {
-            Spawn(BoatTier.Frigate);
+            Spawn(hardBoatDefinition, BoatTier.Hard);
             yield return new WaitForSeconds(Mathf.Max(0.05f, wave.spawnInterval));
         }
     }
@@ -248,7 +255,7 @@ public class Spawner : MonoBehaviour
             float interval = Mathf.Max(0.05f, entry.spawnInterval);
             for (int i = 0; i < count; i++)
             {
-                Spawn(entry.tier);
+                Spawn(entry.definition, BoatTier.Weak);
                 yield return new WaitForSeconds(interval);
             }
         }
@@ -273,7 +280,7 @@ public class Spawner : MonoBehaviour
         OnIntermissionEnded?.Invoke();
     }
 
-    private void Spawn(BoatTier tier)
+    private void Spawn(BoatEnemyDefinition definition, BoatTier fallbackTier)
     {
         if (!ValidatePath() || !boatPrefab)
         {
@@ -284,7 +291,14 @@ public class Spawner : MonoBehaviour
         var boat = Instantiate(boatPrefab, path.GetWaypoint(0).position, Quaternion.identity);
         boat.path = path;
         boat.ownerSpawner = this;
-        boat.SetTier(tier);
+        if (definition)
+        {
+            boat.ApplyDefinition(definition);
+        }
+        else
+        {
+            boat.SetTier(fallbackTier);
+        }
         aliveThisWave++;
     }
 
@@ -305,14 +319,22 @@ public class Spawner : MonoBehaviour
         var boss = Instantiate(prefab, path.GetWaypoint(0).position, Quaternion.identity);
         boss.path = path;
         boss.ownerSpawner = this;
-        boss.maxHealth = Mathf.Max(1, bossHealth);
-        boss.moveSpeed = Mathf.Max(0.01f, bossMoveSpeed);
-        boss.damageToBase = Mathf.Max(1, bossDamageToBase);
-        boss.goldReward = Mathf.Max(0, bossGoldReward);
-        boss.ForceSetCurrentHealth(boss.maxHealth);
+        if (bossBoatDefinition)
+        {
+            boss.ApplyDefinition(bossBoatDefinition);
+        }
+        else
+        {
+            boss.maxHealth = Mathf.Max(1, bossHealth);
+            boss.moveSpeed = Mathf.Max(0.01f, bossMoveSpeed);
+            boss.damageToBase = Mathf.Max(1, bossDamageToBase);
+            boss.goldReward = Mathf.Max(0, bossGoldReward);
+            boss.ForceSetCurrentHealth(boss.maxHealth);
+        }
 
         aliveThisWave++;
         OnBossSpawned?.Invoke(CurrentWaveIndex);
+        AudioManager.Instance?.PlaySFX(SFX.BossSpawn);
     }
 
     private bool ValidatePath()

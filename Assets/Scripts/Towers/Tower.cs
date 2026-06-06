@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum TowerTargetType { WaterOnly, AirOnly, Any }
 public enum TowerArchetype { Light, Heavy, Magic, Air }
+public enum AttackPreferenceMode { Close, Weak, Far }
 
 public abstract class Tower : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public abstract class Tower : MonoBehaviour
     [Header("Build")]
     public string towerDisplayName = "Tower";
     public TowerArchetype towerArchetype = TowerArchetype.Light;
+    public DamageType damageType = DamageType.Physical;
+    public AttackPreferenceMode attackPreferenceMode = AttackPreferenceMode.Close;
     public int buildCost = 30;
     [Range(0f, 1f)] public float sellRefundRatio = 0.7f;
     public TowerUpgradeLevel[] upgrades;
@@ -175,19 +178,17 @@ public abstract class Tower : MonoBehaviour
         if (!projectilePrefab || !firePoint || !_currentTarget) return;
 
         var proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        proj.damageType = damageType;
         proj.Launch(_currentTarget.transform);
 
-        if (fireSfxKey != SFX.None)
-        {
-            AudioManager.Instance?.PlaySFX(fireSfxKey);
-        }
+        AudioManager.Instance?.PlaySFX(ResolveFireSfx());
     }
 
     protected Enemy AcquireTarget()
     {
         var hits = Physics2D.OverlapCircleAll(transform.position, range, enemyLayer);
         Enemy best = null;
-        float bestDist = float.MaxValue;
+        float bestScore = float.MaxValue;
 
         foreach (var h in hits)
         {
@@ -195,10 +196,11 @@ public abstract class Tower : MonoBehaviour
             var e = h.GetComponent<Enemy>();
             if (e && IsValidTarget(e))
             {
-                float d = Vector2.Distance(transform.position, e.transform.position);
-                if (d < bestDist)
+                float score = GetTargetScore(e);
+                if (score < bestScore)
                 {
-                    best = e; bestDist = d;
+                    best = e;
+                    bestScore = score;
                 }
             }
         }
@@ -213,6 +215,33 @@ public abstract class Tower : MonoBehaviour
             TowerTargetType.WaterOnly => e.type == EnemyType.Water,
             TowerTargetType.AirOnly   => e.type == EnemyType.Air,
             _                         => true,
+        };
+    }
+
+    private float GetTargetScore(Enemy enemy)
+    {
+        float distance = Vector2.Distance(transform.position, enemy.transform.position);
+        return attackPreferenceMode switch
+        {
+            AttackPreferenceMode.Weak => enemy.CurrentHealth * 1000f + distance,
+            AttackPreferenceMode.Far => -enemy.WaypointIndex * 1000f + enemy.DistanceToCurrentWaypoint,
+            _ => distance,
+        };
+    }
+
+    private SFX ResolveFireSfx()
+    {
+        if (fireSfxKey != SFX.None)
+        {
+            return fireSfxKey;
+        }
+
+        return towerArchetype switch
+        {
+            TowerArchetype.Heavy => SFX.Cannon,
+            TowerArchetype.Magic => SFX.MagicFire,
+            TowerArchetype.Air => SFX.AirFire,
+            _ => SFX.Ballista,
         };
     }
 

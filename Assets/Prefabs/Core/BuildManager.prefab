@@ -48,9 +48,6 @@ MonoBehaviour:
   buildNodeLayer:
     serializedVersion: 2
     m_Bits: 64
-  placeableGround:
-    serializedVersion: 2
-    m_Bits: 64
   blockedLayers:
     serializedVersion: 2
     m_Bits: 392
@@ -58,6 +55,9 @@ MonoBehaviour:
   snapToGrid: 1
   gridSize: 0.5
   waterRouteWidth: 1.15
+  useManualPlacementBounds: 1
+  placementBoundsCenter: {x: 6, y: -0.6}
+  placementBoundsSize: {x: 19, y: 12}
   okColor: {r: 0.6, g: 1, b: 0.6, a: 0.6}
   badColor: {r: 1, g: 0.5, b: 0.5, a: 0.6}
   towerToBuild: {fileID: 0}

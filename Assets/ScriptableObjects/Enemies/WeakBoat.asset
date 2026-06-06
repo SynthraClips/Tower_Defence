@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e399520c8f4d83904b8576077f2d93, type: 3}
+  m_Name: WeakBoat
+  m_EditorClassIdentifier: 
+  displayName: Weak Boat
+  moveSpeed: 1.7
+  maxHealth: 18
+  damageToBase: 1
+  goldReward: 5
+  flatArmor: 0
+  siegeDamageMultiplier: 1
+  arcaneDamageMultiplier: 1.15
+  airburstDamageMultiplier: 1
+  tint: {r: 0.78, g: 0.93, b: 1, a: 1}
+  scale: {x: 0.9, y: 0.9, z: 1}
+  isFastWeakVariant: 0
