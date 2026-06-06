@@ -3224,6 +3224,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Spawner
   path: {fileID: 0}
   boatPrefab: {fileID: 5811814298424443616, guid: 0c09c5ab097e3f44d878ddd20b991b04, type: 3}
+  weakBoatDefinition: {fileID: 11400000, guid: 9a6fe62e594848d69d84f38630beccf5, type: 2}
+  mediumBoatDefinition: {fileID: 11400000, guid: a2389384641b4195a8630efe3da46ad1, type: 2}
+  hardBoatDefinition: {fileID: 11400000, guid: 6f4d97ad52ca49589270d9eb17decc89, type: 2}
+  swiftBoatDefinition: {fileID: 11400000, guid: 885cbf5461e349ed928e80e4ca6457cd, type: 2}
+  bossBoatDefinition: {fileID: 11400000, guid: 520f5409e5f7400c8bdf33be6d2907cf, type: 2}
   timeBetweenWaves: 1
   baseWaveGold: 20
   perWaveBonus: 2
@@ -3472,6 +3477,9 @@ MonoBehaviour:
   gameManager: {fileID: 1333201817}
   spawner: {fileID: 1924945024}
   path: {fileID: 418478835}
+  buildManager: {fileID: 418589820}
+  levelDefinition: {fileID: 11400000, guid: 3ee13efc71a3453e8500eb2600d62db0, type: 2}
+  autoStartOnSceneLoad: 1
   waveDefinitions:
   - {fileID: 11400000, guid: 3054fb8f162b4c34bf8368174cf2d99d, type: 2}
   - {fileID: 11400000, guid: 1a6cbcc76ef44f66b4127728d7b77d4f, type: 2}
@@ -3873,6 +3881,14 @@ PrefabInstance:
       propertyPath: ballistaPrefab
       value: 
       objectReference: {fileID: 1874503507995934499, guid: 4097a83b3e44c2e42833bb87dd9824ee, type: 3}
+    - target: {fileID: 4626273171996755063, guid: ad6647c54bccb954a85e9c70d27f51e1, type: 3}
+      propertyPath: magicPrefab
+      value: 
+      objectReference: {fileID: 1874503507995934499, guid: 64912ec9d75b4e839e36960c45b74d43, type: 3}
+    - target: {fileID: 4626273171996755063, guid: ad6647c54bccb954a85e9c70d27f51e1, type: 3}
+      propertyPath: airPrefab
+      value: 
+      objectReference: {fileID: 3866445745949216918, guid: 1934252f5aa64d4583db2c3d65f5f856, type: 3}
     - target: {fileID: 6595832363607361279, guid: ad6647c54bccb954a85e9c70d27f51e1, type: 3}
       propertyPath: m_Name
       value: TowerShopUI

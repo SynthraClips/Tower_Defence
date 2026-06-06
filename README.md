@@ -1,37 +1,16 @@
 # Tower Defence
 
-Water-based tower defence project built in Unity and C#.
+Water-based tower defence prototype built in Unity 6.4 and C#.
 
-The target game loop is:
+Core direction:
 
-- boats travel along water routes
-- towers are placed on any valid non-water tile
-- players defend the end point from escalating rounds
-- tower classes are light, heavy, magic, and air attack
+- enemy boats travel along waypoint-driven water routes
+- towers can be placed on valid non-water tiles
+- four tower archetypes drive the defence loop:
+  - light
+  - heavy
+  - magic
+  - air
+- the project is moving toward easy / medium / hard level variants built from reusable level definitions
 
-## Current Direction
-
-This project is being shaped toward a river / harbor defence feel inspired by route-based mobile tower defence games, but with its own art direction, balance, tower identities, and progression.
-
-## Current Status
-
-The project already includes:
-
-- modular C# gameplay foundations
-- wave definitions via ScriptableObjects
-- core game state, wave, enemy, projectile, and HUD systems
-- Unity 6.4 compatibility fixes
-- URP renderer repair
-- Input System migration
-- initial TODO planning in [TODO.md](./TODO.md)
-
-## Next Priorities
-
-1. Replace the old build-node-only placement prototype with placement on any non-water tile.
-2. Build visible water route presentation from the waypoint path.
-3. Re-theme the towers into light, heavy, magic, and air archetypes.
-4. Add feedback for money spent and lives lost.
-
-## Repository Notes
-
-This repository should use small revision commits as the project evolves so gameplay, scene work, and technical refactors stay easy to review.
+Primary planning and progress tracking live in [Documentation/README_goals.md](./Documentation/README_goals.md) and [Documentation/TODO.md](./Documentation/TODO.md).

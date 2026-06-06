@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f9f0f0a9c54430ca9e2578392a2f180, type: 3}
+  m_Name: MediumLevel
+  m_EditorClassIdentifier: 
+  displayName: Medium Channel
+  sceneName: MediumLevel
+  useManualPlacementBounds: 1
+  placementBoundsCenter: {x: 6, y: -0.6}
+  placementBoundsSize: {x: 19, y: 12}
+  waterRouteWidth: 1.25
+  waveDefinitions:
+  - {fileID: 11400000, guid: 5d7c69d59115444bbfa335dbd8ee7715, type: 2}
+  - {fileID: 11400000, guid: 8c875c9c07894887a82f79afdb92b274, type: 2}
+  - {fileID: 11400000, guid: c00b460a89594367a34bdc8a7f79b5b7, type: 2}
+  - {fileID: 11400000, guid: dc8baa2dc1ff4f35bf45fc44553a57d4, type: 2}
+  - {fileID: 11400000, guid: a624a04353eb451e8111343db07e6a2f, type: 2}

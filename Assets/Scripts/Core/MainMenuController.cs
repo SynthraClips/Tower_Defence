@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
-    public string fallbackGameplayScene = "Game";
+    public string fallbackGameplayScene = "Easy Level";
 
     private void Awake()
     {

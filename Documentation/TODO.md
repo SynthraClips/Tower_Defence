@@ -37,6 +37,7 @@ Done:
 - [x] Route now has waypoint readability markers.
 - [x] End of route now has a clearer harbor/core marker.
 - [x] Placement no longer depends on fixed dock/build-node anchors.
+- [x] Medium and hard scene scaffolds now exist as separate route variants.
 
 Still needed:
 - [ ] make the route feel like true water tiles / flowing water, not just layered line art
@@ -51,7 +52,7 @@ Document:
 - [02-non-water-tile-placement-polish.md](./02-non-water-tile-placement-polish.md)
 
 Status:
-- `In progress`
+- `Mostly done`
 
 Done:
 - [x] old active build-node dependency removed from gameplay flow
@@ -74,7 +75,7 @@ Document:
 - [03-reusable-feedback-popup-system.md](./03-reusable-feedback-popup-system.md)
 
 Status:
-- `Partially done`
+- `Mostly done`
 
 Done:
 - [x] spending gold triggers popup feedback
@@ -82,12 +83,14 @@ Done:
 - [x] popup animation / fade exists
 - [x] placement is connected to money-spent feedback
 - [x] end-of-path life loss is connected to life-loss feedback
+- [x] popup logic now lives in a reusable dedicated system
+- [x] UI and world-space popup entry points both exist
+- [x] popup colour, text, duration, and movement are configurable from the system surface
+- [x] enemy damage / reward feedback can reuse the same popup system
 
 Still needed:
-- [ ] move the popup implementation out of `HUDController` into a reusable dedicated system
-- [ ] expose configurable duration, motion, and style more cleanly
-- [ ] optionally move relevant popups closer to the world event, not just HUD text anchors
-- [ ] support future reward / score / warning popups from the same system
+- [ ] add a cleaner shared style preset workflow if multiple popup themes are needed later
+- [ ] expand into score / warning / objective popups if those systems stay in scope
 
 ### Goal 4 — Enemy Boat Ladder
 
@@ -95,13 +98,18 @@ Document:
 - [04-enemy-boat-ladder.md](./04-enemy-boat-ladder.md)
 
 Status:
-- `Not started`
+- `Mostly done`
+
+Done:
+- [x] weak / fast-weak / medium / hard / boss boat definitions now exist
+- [x] health / speed / reward / escape penalty values are now data-driven
+- [x] resistance / armour hook exists through boat definition multipliers and flat armor
+- [x] boat identities are connected cleanly to `WaveDefinition` data
+- [x] distinct placeholder visuals exist via tint / scale / naming differences
+- [x] enemy escape feedback works with the popup system
 
 Still needed:
-- [ ] finalize weak / fast-weak / medium / hard / boss boat classes
-- [ ] assign proper health / speed / reward / escape penalty values
-- [ ] add distinct placeholder visuals for each boat type
-- [ ] connect boat identities cleanly to current wave data
+- [ ] replace tint-only differentiation with stronger bespoke placeholder art when the art pass lands
 
 ### Goal 5 — Tower Archetypes
 
@@ -109,7 +117,7 @@ Document:
 - [05-tower-archetypes.md](./05-tower-archetypes.md)
 
 Status:
-- `Partially done`
+- `Mostly done`
 
 Done:
 - [x] Light attack placeholder identity exists
@@ -117,12 +125,15 @@ Done:
 - [x] Magic placeholder tower class exists
 - [x] Air placeholder tower class exists
 - [x] tower metadata now carries archetype/display-name direction
+- [x] tower metadata now carries damage type and attack preference hooks
+- [x] target preference modes now influence target selection
+- [x] Magic and Air prefabs are wired into tower placement flow
+- [x] all four tower archetypes have distinct stats and placeholder colour identity
 
 Still needed:
-- [ ] wire Magic and Air into visible shop/UI flow
-- [ ] create distinct placeholder visuals for all four tower types
-- [ ] finalize targeting / attack preference hook usage
-- [ ] confirm each tower has clearly different gameplay feel
+- [ ] wire Magic and Air into a clearer visible shop/button layout, not just prefab/shortcut support
+- [ ] replace colour-only tower differentiation with stronger bespoke placeholder art
+- [ ] full playtest to confirm each tower has clearly different gameplay feel
 
 ### Goal 6 — Projectiles and Combat Feedback
 
@@ -130,12 +141,17 @@ Document:
 - [06-projectiles-and-combat-feedback.md](./06-projectiles-and-combat-feedback.md)
 
 Status:
-- `Not started`
+- `Partially done`
+
+Done:
+- [x] projectile identity now differs across light / heavy / magic / air towers
+- [x] damage type now flows from tower to projectile to enemy
+- [x] hit feedback now includes enemy damage popups and flash feedback
+- [x] splash combat feedback now has its own popup/audio hook
 
 Still needed:
-- [ ] define projectile identities for all four tower archetypes
-- [ ] improve hit feedback and impact readability
-- [ ] improve water/splash combat feedback
+- [ ] add stronger bespoke impact / splash VFX beyond popup-and-audio readability
+- [ ] add true anti-air combat validation once flying enemies exist
 
 ### Goal 7 — Waves and Round Balance
 
@@ -143,18 +159,22 @@ Document:
 - [07-waves-and-round-balance.md](./07-waves-and-round-balance.md)
 
 Status:
-- `Partially done`
+- `Mostly done`
 
 Done:
 - [x] WaveDefinition workflow exists
 - [x] first five starter wave assets exist
 - [x] initial rebalance pass was applied toward weak/medium/hard/boss structure
+- [x] round 1 is now 10 weak boats
+- [x] round 2 is now 10 medium boats
+- [x] swift raft pacing is introduced in later early waves
+- [x] boss wave reward cadence is wired and improved
+- [x] reward scaling is now more deliberate against current tower costs
 
 Still needed:
 - [ ] validate the new wave pacing in actual play
 - [ ] confirm total round progression
-- [ ] integrate proper boss cadence
-- [ ] tune reward scaling against tower costs
+- [ ] final tune reward scaling against real player build patterns
 
 ### Goal 8 — HUD, Menus, and Game Flow Polish
 
@@ -167,13 +187,16 @@ Status:
 Done:
 - [x] lives / gold / wave / game over / victory / state HUD items exist
 - [x] money spent and lives lost feedback exists in some form
+- [x] pause / resume hotkey flow now exists
+- [x] restart and return-to-menu hotkeys now exist
+- [x] end-state HUD now explains restart/menu flow more clearly
+- [x] gameplay scenes now have easy / medium / hard entry-point scaffolds
 
 Still needed:
-- [ ] next round / start round flow polish
-- [ ] speed control polish
-- [ ] pause flow polish
-- [ ] restart / fail flow polish
-- [ ] menu / settings cleanup
+- [ ] next round / manual start round flow if that remains in scope
+- [ ] speed control polish and clearer label treatment
+- [ ] visible pause / restart / menu button polish
+- [ ] menu / settings scene cleanup
 
 ### Goal 9 — Art and Presentation Pass
 
@@ -181,13 +204,17 @@ Document:
 - [09-art-and-presentation-pass.md](./09-art-and-presentation-pass.md)
 
 Status:
-- `Not started`
+- `Partially done`
+
+Done:
+- [x] route water presentation is significantly stronger than the original debug line
+- [x] boats and towers now have stronger placeholder differentiation through colour and scale
+- [x] separate medium / hard route shapes now exist as scene scaffolds
 
 Still needed:
-- [ ] enemy placeholder art pass
-- [ ] tower placeholder art pass
-- [ ] route water presentation pass
-- [ ] harbor/base/core visual pass
+- [ ] enemy placeholder art pass beyond tint/scale silhouettes
+- [ ] tower placeholder art pass beyond tint/scale silhouettes
+- [ ] stronger harbor/base/core visual pass
 - [ ] stronger unified visual style
 
 ### Goal 10 — Audio Pass
@@ -196,12 +223,16 @@ Document:
 - [10-audio-pass.md](./10-audio-pass.md)
 
 Status:
-- `Not started`
+- `Partially done`
+
+Done:
+- [x] tower / hit / death / splash / base-hit / round feedback hooks now exist in code
+- [x] audio fallback routing exists so missing dedicated clips degrade gracefully
 
 Still needed:
-- [ ] confirm tower / hit / death / splash / base-hit sound coverage
-- [ ] connect background music loop
-- [ ] connect round start / round complete feedback
+- [ ] assign dedicated clips for every new sound event
+- [ ] connect background music loop cleanly in gameplay scenes
+- [ ] sanity-check mix levels in-editor
 
 ### Goal 11 — Final Technical Validation and Cleanup
 
@@ -209,7 +240,7 @@ Document:
 - [11-final-technical-validation-and-cleanup.md](./11-final-technical-validation-and-cleanup.md)
 
 Status:
-- `In progress`
+- `Mostly done`
 
 Done:
 - [x] Unity 6.4 upgrade/retarget complete
@@ -219,11 +250,13 @@ Done:
 - [x] obsolete API cleanup pass started
 - [x] asset sorting pass completed
 - [x] git repo initialized and revision commits started
+- [x] Unity batchmode validation now completes successfully under 6000.4.10f1
+- [x] core gameplay loop pieces compile/import together after the latest goal work
+- [x] menu scene no longer points its default play target at a missing gameplay scene
 
 Still needed:
-- [ ] full editor validation after placement stabilization
-- [ ] final warning cleanup pass
-- [ ] deeper prefab / scene audit after gameplay loop settles
+- [ ] final warning cleanup pass from a fresh editor-opened interactive session
+- [ ] deeper prefab / scene audit after more playtesting
 
 ### Goal 12 — Optional First Playable Vertical Slice
 
@@ -231,14 +264,22 @@ Document:
 - [12-optional-first-playable-vertical-slice.md](./12-optional-first-playable-vertical-slice.md)
 
 Status:
-- `Blocked by earlier goals`
+- `In progress`
+
+Done:
+- [x] one readable harbor-style gameplay map exists
+- [x] waypoint-driven water route exists
+- [x] open land placement exists
+- [x] spawn/end markers exist
+- [x] four tower archetypes exist in gameplay data
+- [x] first enemy ladder exists
+- [x] first five balanced wave assets exist
+- [x] HUD / money spent / lives lost flow exists
 
 Still needed first:
-- [ ] Goal 1 scene identity
-- [ ] Goal 4 enemy ladder
-- [ ] Goal 5 four tower archetypes fully wired
-- [ ] Goal 6 combat feedback
-- [ ] Goal 7 playable balance
+- [ ] stronger art pass
+- [ ] dedicated audio clip pass
+- [ ] broader playtest and balance validation across all three level scaffolds
 
 ## Cross-Cutting Notes
 
@@ -261,5 +302,5 @@ Still needed first:
 
 1. Finish Goal 1 presentation so the route feels like proper water tiles/flow and the harbor/base/core reads clearly.
 2. Finish Goal 2 polish by tightening any remaining placement edge cases and making valid placement more obvious.
-3. Upgrade Goal 3 from “working” to “reusable system.”
-4. Start Goal 4 enemy ladder and Goal 5 full tower wiring in parallel through normal implementation passes.
+3. Do an in-editor playtest pass across easy / medium / hard scene scaffolds and retune waves/tower feel from real gameplay.
+4. Land the dedicated placeholder art and audio assets so Goals 9 and 10 move from hooks to presentation.
