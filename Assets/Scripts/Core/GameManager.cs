@@ -1,0 +1,144 @@
+using System;
+using UnityEngine;
+
+public enum GameState
+{
+    Booting,
+    Running,
+    Paused,
+    Victory,
+    Defeat,
+}
+
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance { get; private set; }
+
+    [Header("Player Stats")]
+    public int lives = 20;
+    public int gold = 100;
+
+    [Header("Runtime")]
+    [SerializeField] private GameState state = GameState.Booting;
+    [SerializeField] private int currentWave;
+    [SerializeField] private int totalWaves;
+
+    public event Action<int> OnLivesChanged;
+    public event Action<int> OnGoldChanged;
+    public event Action<GameState> OnStateChanged;
+    public event Action<int, int> OnWaveChanged;
+    public event Action OnGameOver;
+    public event Action OnVictory;
+
+    public GameState State => state;
+    public int CurrentWave => currentWave;
+    public int TotalWaves => totalWaves;
+    public bool IsGameOver => state == GameState.Defeat;
+    public bool IsPaused => state == GameState.Paused;
+
+    private void Awake()
+    {
+        if (Instance && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        ChangeState(GameState.Booting);
+    }
+
+    private void Start()
+    {
+        OnLivesChanged?.Invoke(lives);
+        OnGoldChanged?.Invoke(gold);
+        OnWaveChanged?.Invoke(currentWave, totalWaves);
+    }
+
+    public void StartRun(int waveCount)
+    {
+        totalWaves = Mathf.Max(0, waveCount);
+        currentWave = 0;
+        Time.timeScale = 1f;
+        ChangeState(GameState.Running);
+        OnWaveChanged?.Invoke(currentWave, totalWaves);
+    }
+
+    public void SetCurrentWave(int waveIndex)
+    {
+        currentWave = Mathf.Clamp(waveIndex, 0, Mathf.Max(0, totalWaves));
+        OnWaveChanged?.Invoke(currentWave, totalWaves);
+    }
+
+    public void PauseGame()
+    {
+        if (state != GameState.Running) return;
+        Time.timeScale = 0f;
+        ChangeState(GameState.Paused);
+    }
+
+    public void ResumeGame()
+    {
+        if (state != GameState.Paused) return;
+        Time.timeScale = 1f;
+        ChangeState(GameState.Running);
+    }
+
+    public void AddGold(int amount)
+    {
+        gold += Mathf.Max(0, amount);
+        OnGoldChanged?.Invoke(gold);
+    }
+
+    public bool SpendGold(int amount)
+    {
+        if (gold < amount) return false;
+        gold -= amount;
+        OnGoldChanged?.Invoke(gold);
+        return true;
+    }
+
+    public void HealLife(int amount, int maxCap = 999)
+    {
+        if (amount <= 0) return;
+        lives += amount;
+        lives = Mathf.Min(lives, maxCap);
+        OnLivesChanged?.Invoke(lives);
+    }
+
+    public void TakeLifeDamage(int amount)
+    {
+        if (state == GameState.Defeat || state == GameState.Victory) return;
+
+        lives -= Mathf.Max(1, amount);
+        if (lives < 0) lives = 0;
+        OnLivesChanged?.Invoke(lives);
+
+        if (lives <= 0)
+        {
+            TriggerGameOver();
+        }
+    }
+
+    public void TriggerVictory()
+    {
+        if (state == GameState.Victory || state == GameState.Defeat) return;
+
+        Debug.Log("Victory!");
+        Time.timeScale = 0f;
+        ChangeState(GameState.Victory);
+        OnVictory?.Invoke();
+    }
+
+    public void TriggerGameOver()
+    {
+        if (state == GameState.Defeat) return;
+
+        Debug.Log("Game Over!");
+        Time.timeScale = 0f;
+        ChangeState(GameState.Defeat);
+        OnGameOver?.Invoke();
+    }
+
+    private void ChangeState(GameState newState)
+    {
+        state = newState;
+        OnStateChanged?.Invoke(state);
+    }
+}
