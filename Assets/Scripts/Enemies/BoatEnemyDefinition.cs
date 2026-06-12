@@ -4,6 +4,10 @@ using UnityEngine;
 public class BoatEnemyDefinition : ScriptableObject
 {
     public string displayName = "Boat";
+
+    [Header("Optional Visual Prefab")]
+    [Tooltip("Optional prefab used for this boat definition. Leave empty to use the spawner's default boat prefab.")]
+    public BoatEnemy prefabOverride;
     public float moveSpeed = 1.5f;
     public int maxHealth = 20;
     public int damageToBase = 1;

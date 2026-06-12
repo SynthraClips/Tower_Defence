@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 104524024895400780}
+  - component: {fileID: 5129069713081531119}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -31,3 +32,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5129069713081531119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9092914843454893651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa5e6f2c0b31fa643aa89f437e766e51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  startingLives: 20
+  startingGold: 100
+  lives: 20
+  gold: 100
+  state: 0
+  currentWave: 0
+  totalWaves: 0

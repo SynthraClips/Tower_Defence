@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: HardBoat
   m_EditorClassIdentifier: 
   displayName: Hard Boat
+  prefabOverride: {fileID: 5811814298424443616, guid: f3c9940b9a474d97972f37e7b7b8c702, type: 3}
   moveSpeed: 1
   maxHealth: 90
   damageToBase: 2

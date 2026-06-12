@@ -3073,7 +3073,7 @@ MonoBehaviour:
   gameManager: {fileID: 1333201817}
   spawner: {fileID: 1924945024}
   path: {fileID: 418478835}
-  buildManager: {fileID: 418589820}
+  buildManager: {fileID: 524244517}
   levelDefinition: {fileID: 11400000, guid: 3ee13efc71a3453e8500eb2600d62db0, type: 2}
   autoStartOnSceneLoad: 1
   waveDefinitions:
@@ -3229,15 +3229,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4126561313368087120, guid: 5d0a145021629e040972daf0fc4b8abd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.69
+      value: -5.555
       objectReference: {fileID: 0}
     - target: {fileID: 4126561313368087120, guid: 5d0a145021629e040972daf0fc4b8abd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.42
+      value: 1.335
       objectReference: {fileID: 0}
     - target: {fileID: 4126561313368087120, guid: 5d0a145021629e040972daf0fc4b8abd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0
       objectReference: {fileID: 0}
     - target: {fileID: 4126561313368087120, guid: 5d0a145021629e040972daf0fc4b8abd, type: 3}
       propertyPath: m_LocalRotation.w

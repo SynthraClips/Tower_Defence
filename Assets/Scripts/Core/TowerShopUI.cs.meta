@@ -1,2 +1,18 @@
 fileFormatVersion: 2
 guid: da048a8241567b04cb829476a079074b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - placer: {instanceID: 0}
+  - ballistaPrefab: {fileID: 1874503507995934499, guid: 4097a83b3e44c2e42833bb87dd9824ee, type: 3}
+  - cannonPrefab: {fileID: 3866445745949216918, guid: f9ce6095f3288fa4d9e8d90193c26474, type: 3}
+  - magicPrefab: {fileID: 1874503507995934499, guid: 64912ec9d75b4e839e36960c45b74d43, type: 3}
+  - airPrefab: {fileID: 3866445745949216918, guid: 1934252f5aa64d4583db2c3d65f5f856, type: 3}
+  - catapultPrefab: {instanceID: 0}
+  - toolbarParent: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

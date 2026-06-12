@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: WeakBoat
   m_EditorClassIdentifier: 
   displayName: Weak Boat
+  prefabOverride: {fileID: 5811814298424443616, guid: c5329f0adf3b45df918045ad1463e81b, type: 3}
   moveSpeed: 1.7
   maxHealth: 18
   damageToBase: 1

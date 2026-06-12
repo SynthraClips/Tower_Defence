@@ -10,6 +10,7 @@ public enum SFX
     AirFire,
     BoatHit,
     BoatDeath,
+    Explosion,
     WaterSplash,
     BaseHit,
     RoundStart,

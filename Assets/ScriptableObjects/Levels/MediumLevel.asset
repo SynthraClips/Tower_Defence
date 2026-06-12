@@ -15,12 +15,12 @@ MonoBehaviour:
   displayName: Medium Channel
   sceneName: MediumLevel
   useManualPlacementBounds: 1
-  placementBoundsCenter: {x: 6, y: -0.6}
-  placementBoundsSize: {x: 19, y: 12}
-  waterRouteWidth: 1.25
+  placementBoundsCenter: {x: 0, y: 0}
+  placementBoundsSize: {x: 18, y: 10}
+  waterRouteWidth: 1.65
   waveDefinitions:
-  - {fileID: 11400000, guid: 5d7c69d59115444bbfa335dbd8ee7715, type: 2}
-  - {fileID: 11400000, guid: 8c875c9c07894887a82f79afdb92b274, type: 2}
-  - {fileID: 11400000, guid: c00b460a89594367a34bdc8a7f79b5b7, type: 2}
-  - {fileID: 11400000, guid: dc8baa2dc1ff4f35bf45fc44553a57d4, type: 2}
-  - {fileID: 11400000, guid: a624a04353eb451e8111343db07e6a2f, type: 2}
+  - {fileID: 11400000, guid: 19650c1cba654ee1978ae1c323d089db, type: 2}
+  - {fileID: 11400000, guid: f079417ed2ea45dd95750de0d0728cf1, type: 2}
+  - {fileID: 11400000, guid: 82f6b40f94a64b57882f4a0dfbffc3d4, type: 2}
+  - {fileID: 11400000, guid: 0157c20260ea4ee1b024bc6f830d0c6b, type: 2}
+  - {fileID: 11400000, guid: 55841c56d48f4d37955ed280aeb21507, type: 2}

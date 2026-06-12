@@ -15,12 +15,12 @@ MonoBehaviour:
   displayName: Hard Estuary
   sceneName: HardLevel
   useManualPlacementBounds: 1
-  placementBoundsCenter: {x: 6, y: -0.6}
-  placementBoundsSize: {x: 19, y: 12}
-  waterRouteWidth: 1.35
+  placementBoundsCenter: {x: 0, y: 0}
+  placementBoundsSize: {x: 18, y: 10}
+  waterRouteWidth: 1.75
   waveDefinitions:
-  - {fileID: 11400000, guid: 5d7c69d59115444bbfa335dbd8ee7715, type: 2}
-  - {fileID: 11400000, guid: 8c875c9c07894887a82f79afdb92b274, type: 2}
-  - {fileID: 11400000, guid: c00b460a89594367a34bdc8a7f79b5b7, type: 2}
-  - {fileID: 11400000, guid: dc8baa2dc1ff4f35bf45fc44553a57d4, type: 2}
-  - {fileID: 11400000, guid: a624a04353eb451e8111343db07e6a2f, type: 2}
+  - {fileID: 11400000, guid: 887eb48352a748119d59c0f0b261b752, type: 2}
+  - {fileID: 11400000, guid: 2a34dd07a3854a5d906de66ca2e20a83, type: 2}
+  - {fileID: 11400000, guid: f5413e62aa0247fbadb469ce8fabee88, type: 2}
+  - {fileID: 11400000, guid: e143204dfaec47cca14058c5772eef9b, type: 2}
+  - {fileID: 11400000, guid: 52c276712eec44b0a99ba3e7f8c4e6d8, type: 2}

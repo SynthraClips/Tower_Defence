@@ -29,22 +29,33 @@ public class FloatingPopupSystem : MonoBehaviour
 
     public void ShowUiPopup(TextMeshProUGUI source, string text, Color color, float? duration = null, Vector2? offset = null)
     {
-        if (!source || !source.transform.parent) return;
+        if (!source || !source.rectTransform)
+        {
+            return;
+        }
 
-        var popupObject = new GameObject($"{source.name}_Popup");
-        popupObject.transform.SetParent(source.transform.parent, false);
+        RectTransform sourceRect = source.rectTransform;
+        Transform popupParent = sourceRect.parent ? sourceRect.parent : sourceRect;
 
-        var popupTransform = popupObject.AddComponent<RectTransform>();
-        popupTransform.anchorMin = source.rectTransform.anchorMin;
-        popupTransform.anchorMax = source.rectTransform.anchorMax;
-        popupTransform.pivot = source.rectTransform.pivot;
-        popupTransform.anchoredPosition = source.rectTransform.anchoredPosition + (offset ?? defaultUiOffset);
-        popupTransform.sizeDelta = source.rectTransform.sizeDelta;
+        var popupObject = new GameObject($"{source.name}_Popup", typeof(RectTransform));
+        popupObject.transform.SetParent(popupParent, false);
+
+        var popupTransform = popupObject.GetComponent<RectTransform>();
+        popupTransform.anchorMin = sourceRect.anchorMin;
+        popupTransform.anchorMax = sourceRect.anchorMax;
+        popupTransform.pivot = sourceRect.pivot;
+        popupTransform.sizeDelta = new Vector2(
+            Mathf.Max(80f, sourceRect.rect.width),
+            Mathf.Max(30f, sourceRect.rect.height));
+        popupTransform.localScale = sourceRect.localScale;
+        popupTransform.localRotation = Quaternion.identity;
+        popupTransform.anchoredPosition = sourceRect.anchoredPosition + (offset ?? defaultUiOffset);
 
         var popup = popupObject.AddComponent<TextMeshProUGUI>();
         popup.font = source.font;
         popup.fontSharedMaterial = source.fontSharedMaterial;
-        popup.fontSize = source.fontSize * 0.8f;
+        popup.fontSize = Mathf.Clamp(source.fontSize * 0.8f, 14f, 32f);
+        popup.enableAutoSizing = false;
         popup.alignment = TextAlignmentOptions.Center;
         popup.raycastTarget = false;
         popup.text = text;
@@ -60,14 +71,15 @@ public class FloatingPopupSystem : MonoBehaviour
         var canvas = FindAnyObjectByType<Canvas>();
         if (!canvas) return;
 
-        var popupObject = new GameObject("WorldPopup");
+        var popupObject = new GameObject("WorldPopup", typeof(RectTransform));
         popupObject.transform.SetParent(canvas.transform, false);
 
-        var popupTransform = popupObject.AddComponent<RectTransform>();
+        var popupTransform = popupObject.GetComponent<RectTransform>();
         popupTransform.sizeDelta = new Vector2(120f, 36f);
 
         var popup = popupObject.AddComponent<TextMeshProUGUI>();
-        popup.fontSize = 24f;
+        popup.fontSize = 20f;
+        popup.enableAutoSizing = false;
         popup.alignment = TextAlignmentOptions.Center;
         popup.raycastTarget = false;
         popup.text = text;

@@ -1785,21 +1785,21 @@ PrefabInstance:
       propertyPath: masterMixer
       value: 
       objectReference: {fileID: 24100000, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
-    - target: {fileID: 493358236682912364, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
-      propertyPath: sfxLibrary.Array.size
+    - target: {fileID: 610692164751920643, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
+      propertyPath: musicLibrary.Array.size
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 493358236682912364, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
-      propertyPath: sfxLibrary.Array.data[4].key
-      value: 7
+    - target: {fileID: 610692164751920643, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
+      propertyPath: mainMenuMusicResourcePath
+      value: Music/main_menu_music
       objectReference: {fileID: 0}
-    - target: {fileID: 493358236682912364, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
-      propertyPath: sfxLibrary.Array.data[6].key
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 493358236682912364, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
-      propertyPath: sfxLibrary.Array.data[0].clip
+    - target: {fileID: 610692164751920643, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
+      propertyPath: musicLibrary.Array.data[0].clip
       value: 
+      objectReference: {fileID: 8300000, guid: 028128c0f3c418441980b71897be569f, type: 3}
+    - target: {fileID: 610692164751920643, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
+      propertyPath: musicLibrary.Array.data[0].loop
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1622497238809452156, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1848,40 +1848,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5753126904882296249, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4864893748396105834}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
---- !u!1 &4864893748396105833 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5753126904882296249, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
-  m_PrefabInstance: {fileID: 4864893748396105832}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4864893748396105834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4864893748396105833}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73a6df057918ba04f8ea74df7792e12f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  masterMixer: {fileID: 24100000, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
-  musicGroup: {fileID: -4019950565126412025, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
-  sfxGroup: {fileID: 9116147662019114836, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
-  sfxLibrary:
-  - key: 0
-    clip: {fileID: 8300000, guid: 0575982426797ce4685043cd85001bb9, type: 3}
-  - key: 1
-    clip: {fileID: 8300000, guid: ce87bb4dd27f9114eab52123b78a0cfd, type: 3}
-  - key: 2
-    clip: {fileID: 8300000, guid: 13a2b8f039a4d1f41b9a509c4051c2cd, type: 3}
-  - key: 3
-    clip: {fileID: 8300000, guid: a3c434d0b5a4d424f82fe1524885fbcc, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

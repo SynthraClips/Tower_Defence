@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BossBoat
   m_EditorClassIdentifier: 
   displayName: Boss Boat
+  prefabOverride: {fileID: 5811814298424443616, guid: b6d13f8a20fb4675ac65f74be391d0cb, type: 3}
   moveSpeed: 0.82
   maxHealth: 260
   damageToBase: 4

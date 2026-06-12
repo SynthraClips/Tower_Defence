@@ -1609,7 +1609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3823353cc2e2984283b73527620cad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  fallbackGameplayScene: EasyLevel
+  fallbackGameplayScene: Easy Level
 --- !u!4 &1424086660
 Transform:
   m_ObjectHideFlags: 0

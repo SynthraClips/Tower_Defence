@@ -2,9 +2,12 @@ namespace WaterTD
 {
     public static class SceneNames
     {
-        public const string MainMenu    = "MainMenu";
-        public const string LevelSelect = "LevelSelect"; // you’ll make this next
-        public const string Settings    = "Settings";    // you’ll make this later
-        public const string Game        = "Game";        // your gameplay scene name
+        public const string MainMenu = "MainMenu";
+        public const string LevelSelect = "LevelSelect";
+        public const string Settings = "Settings";
+        public const string EasyLevel = "Easy Level";
+        public const string MediumLevel = "MediumLevel";
+        public const string HardLevel = "HardLevel";
+        public const string Game = EasyLevel;
     }
 }

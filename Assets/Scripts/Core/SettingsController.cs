@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using WaterTD;
 
 public class SettingsController : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class SettingsController : MonoBehaviour
     public TextMeshProUGUI sfxLabel;
 
     [Header("Navigation")]
-    public string backSceneName = "MainMenu";
+    public string backSceneName = SceneNames.MainMenu;
 
     private void Start()
     {

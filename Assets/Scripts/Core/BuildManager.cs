@@ -20,7 +20,7 @@ public class BuildManager : MonoBehaviour
     public float minClearRadius = 0.35f;
     public bool snapToGrid = true;
     public float gridSize = 0.5f;
-    [Min(0.1f)] public float waterRouteWidth = 1.15f;
+    [Min(0.1f)] public float waterRouteWidth = 1.55f;
 
     [Header("Board Area")]
     public bool useManualPlacementBounds = false;

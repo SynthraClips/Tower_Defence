@@ -9,22 +9,30 @@ public class TowerPlacer : MonoBehaviour
     public BuildManager build;
     public LineRenderer rangePreviewPrefab; // optional
 
-    private Tower   ghostInstance;
+    private Tower selectedTowerPrefab;
+    private Tower ghostInstance;
     private SpriteRenderer[] ghostSprites;
     private LineRenderer rangePreview;
+    private SpriteRenderer rangeFillPreview;
+    private float selectedTowerRange;
     private bool    isPlacing;
     private int     cachedCost;
     private PlacementValidationResult lastValidationResult = PlacementValidationResult.OutOfBounds;
 
     private void Awake()
     {
-        if (!cam) cam = Camera.main;
-        if (!build) build = BuildManager.Instance;
+        RefreshDependencies();
     }
 
     private void Update()
     {
         if (!isPlacing) return;
+
+        RefreshDependencies();
+        if (!build || !GameManager.Instance)
+        {
+            return;
+        }
 
         // Cancel
         if (WasRightMousePressedThisFrame() || WasEscapePressedThisFrame())
@@ -49,8 +57,9 @@ public class TowerPlacer : MonoBehaviour
         {
             ghostInstance.transform.position = posWorld;
             SetGhostColor(ok ? build.okColor : build.badColor);
-            UpdateRangePreview(ghostInstance.range);
         }
+
+        UpdateRangePreview(selectedTowerRange);
 
         // Place
         if (ok && WasLeftMousePressedThisFrame() && GameManager.Instance.gold >= cachedCost)
@@ -83,7 +92,18 @@ public class TowerPlacer : MonoBehaviour
         }
 
         isPlacing = true;
+        selectedTowerPrefab = towerPrefab;
         cachedCost = Mathf.Max(0, towerPrefab.buildCost);
+        selectedTowerRange = Mathf.Max(0.1f, towerPrefab.range);
+        RefreshDependencies();
+        if (!build)
+        {
+            Debug.LogWarning("[TowerPlacer] BuildManager is missing, cannot begin placement.", this);
+            isPlacing = false;
+            selectedTowerPrefab = null;
+            selectedTowerRange = 0f;
+            return;
+        }
 
         // Create ghost
         ghostInstance = Instantiate(towerPrefab);
@@ -99,9 +119,25 @@ public class TowerPlacer : MonoBehaviour
         if (rangePreviewPrefab)
         {
             rangePreview = Instantiate(rangePreviewPrefab);
+            rangePreview.transform.SetParent(null, false);
+            rangePreview.transform.localScale = Vector3.one;
             rangePreview.loop = true;
-            rangePreview.positionCount = 64;
+            rangePreview.useWorldSpace = true;
+            rangePreview.positionCount = 65;
+            if (rangePreview.sharedMaterial == null && Shader.Find("Sprites/Default") != null)
+            {
+                rangePreview.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
+            }
+            rangePreview.widthMultiplier = Mathf.Clamp(rangePreview.widthMultiplier, 0.03f, 0.15f);
         }
+        else
+        {
+            rangePreview = CreateRuntimeRangePreview();
+        }
+
+        rangeFillPreview = CreateRuntimeRangeFillPreview();
+
+        UpdateRangePreview(selectedTowerRange);
     }
 
     private void EndPlacement()
@@ -114,33 +150,46 @@ public class TowerPlacer : MonoBehaviour
         isPlacing = false;
         if (ghostInstance) Destroy(ghostInstance.gameObject);
         if (rangePreview) Destroy(rangePreview.gameObject);
+        if (rangeFillPreview) Destroy(rangeFillPreview.gameObject);
+        selectedTowerPrefab = null;
+        selectedTowerRange = 0f;
         ghostInstance = null;
         rangePreview = null;
+        rangeFillPreview = null;
         ghostSprites = null;
         lastValidationResult = PlacementValidationResult.OutOfBounds;
     }
 
     private void PlaceTower(Vector3 pos)
     {
-        // Re-enable components on a fresh instance so we don't carry ghost state
-        var prefab = ghostInstance; // store to read which type we were placing
-        var collGhost = prefab.GetComponent<Collider2D>();
-        var scriptType = prefab.GetType();
-
-        // Create a fresh real tower
-        var real = Instantiate(prefab, pos, prefab.transform.rotation);
-        if (collGhost)
+        if (!selectedTowerPrefab)
         {
-            var realCol = real.GetComponent<Collider2D>();
-            if (realCol) realCol.enabled = true;
+            Debug.LogWarning("No selected tower prefab was available when placing.");
+            return;
         }
+
+        // Instantiate from the original prefab, not the ghost.
+        // This prevents the real tower inheriting disabled colliders, disabled scripts or ghost tint alpha.
+        var real = Instantiate(selectedTowerPrefab, pos, selectedTowerPrefab.transform.rotation);
+
+        var realCol = real.GetComponent<Collider2D>();
+        if (realCol) realCol.enabled = true;
         real.enabled = true;
+
+        if (build && build.requireBuildNodes)
+        {
+            BuildNode node = build.GetBuildNodeAt(pos);
+            if (node && !node.TryOccupy(real))
+            {
+                Debug.LogWarning($"Could not occupy build node at {pos} for {real.name}.");
+            }
+        }
 
         // Mark on Tower layer for blockers
         int towerLayer = LayerMask.NameToLayer("Tower");
         if (towerLayer >= 0) real.gameObject.layer = towerLayer;
 
-        Debug.Log($"Placed {scriptType.Name} at {pos} for {cachedCost} gold.");
+        Debug.Log($"Placed {selectedTowerPrefab.GetType().Name} at {pos} for {cachedCost} gold.");
     }
 
     private bool TryGetMouseWorldOnGround(out Vector3 world)
@@ -177,11 +226,19 @@ public class TowerPlacer : MonoBehaviour
     {
         if (!rangePreview) return;
         Vector3 center = ghostInstance ? ghostInstance.transform.position : Vector3.zero;
-        for (int i = 0; i < rangePreview.positionCount; i++)
+        int segments = Mathf.Max(4, rangePreview.positionCount - 1);
+        for (int i = 0; i <= segments; i++)
         {
-            float t = (i / (float)rangePreview.positionCount) * Mathf.PI * 2f;
-            Vector3 p = center + new Vector3(Mathf.Cos(t), Mathf.Sin(t)) * radius;
+            float t = (i / (float)segments) * Mathf.PI * 2f;
+            Vector3 p = center + new Vector3(Mathf.Cos(t), Mathf.Sin(t), 0f) * radius;
             rangePreview.SetPosition(i, p);
+        }
+
+        if (rangeFillPreview)
+        {
+            rangeFillPreview.transform.position = center;
+            float diameter = radius * 2f;
+            rangeFillPreview.transform.localScale = new Vector3(diameter, diameter, 1f);
         }
     }
 
@@ -198,5 +255,75 @@ public class TowerPlacer : MonoBehaviour
     private static bool WasEscapePressedThisFrame()
     {
         return Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+    }
+
+    private void RefreshDependencies()
+    {
+        if (!cam)
+        {
+            cam = Camera.main;
+        }
+
+        if (!build)
+        {
+            build = BuildManager.Instance;
+            if (!build)
+            {
+                build = FindAnyObjectByType<BuildManager>();
+            }
+        }
+    }
+
+    private static LineRenderer CreateRuntimeRangePreview()
+    {
+        var previewObject = new GameObject("RuntimeRangePreview");
+        var renderer = previewObject.AddComponent<LineRenderer>();
+        renderer.loop = true;
+        renderer.useWorldSpace = true;
+        renderer.positionCount = 65;
+        renderer.startWidth = 0.06f;
+        renderer.endWidth = 0.06f;
+        renderer.widthMultiplier = 1f;
+        renderer.numCornerVertices = 4;
+        renderer.numCapVertices = 4;
+        renderer.startColor = new Color(0.56f, 0.96f, 1f, 0.95f);
+        renderer.endColor = renderer.startColor;
+        renderer.sortingOrder = 50;
+        if (Shader.Find("Sprites/Default") != null)
+        {
+            renderer.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
+        }
+
+        return renderer;
+    }
+
+    private static SpriteRenderer CreateRuntimeRangeFillPreview()
+    {
+        var fillObject = new GameObject("RuntimeRangePreviewFill");
+        var renderer = fillObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateCircleSprite();
+        renderer.color = new Color(0.3f, 0.8f, 1f, 0.16f);
+        renderer.sortingOrder = 49;
+        return renderer;
+    }
+
+    private static Sprite CreateCircleSprite()
+    {
+        const int size = 128;
+        var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.name = "RuntimeRangePreviewCircle";
+        Vector2 centre = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+        float radius = size * 0.5f;
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), centre);
+                texture.SetPixel(x, y, distance <= radius ? Color.white : Color.clear);
+            }
+        }
+
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
     }
 }

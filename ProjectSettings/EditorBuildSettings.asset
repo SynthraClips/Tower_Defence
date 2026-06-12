@@ -20,5 +20,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Easy Level.unity
     guid: 7650e3a08f2f695408f5c5d7adfdf3b5
+  - enabled: 1
+    path: Assets/Scenes/MediumLevel.unity
+    guid: e5292d56960d4bc8a5c586735953c214
+  - enabled: 1
+    path: Assets/Scenes/HardLevel.unity
+    guid: 8e63731417a14bd6aaea643ea58d5f9e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

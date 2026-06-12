@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8987249772652186279}
+  - component: {fileID: 1416259900752025301}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -31,3 +32,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1416259900752025301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2695183193827574078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c58376666d1c80c448d75f21aa5ceb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Main
+  gameManagerPrefab: {fileID: 5129069713081531119, guid: adda27d771c1b91488de725cced30543, type: 3}
+  audioManagerPrefab: {fileID: 610692164751920643, guid: 897b469b6c9660842a002ca870cedb32, type: 3}
+  createFallbackManagersIfMissing: 1
+  gameManager: {fileID: 0}
+  spawner: {fileID: 0}
+  path: {fileID: 0}
+  buildManager: {fileID: 0}
+  waves: []
+  waveDefinitions: []
+  levelDefinition: {fileID: 0}
+  autoStartOnSceneLoad: 1

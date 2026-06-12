@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1622497238809452156}
+  - component: {fileID: 610692164751920643}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -31,3 +32,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &610692164751920643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5753126904882296249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73a6df057918ba04f8ea74df7792e12f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  masterMixer: {fileID: 24100000, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
+  musicGroup: {fileID: -4019950565126412025, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
+  sfxGroup: {fileID: 9116147662019114836, guid: 8a121906bd854b545bd14c1cf448fa15, type: 2}
+  sfxLibrary:
+  - key: 0
+    clip: {fileID: 8300000, guid: 0575982426797ce4685043cd85001bb9, type: 3}
+  - key: 1
+    clip: {fileID: 8300000, guid: ce87bb4dd27f9114eab52123b78a0cfd, type: 3}
+  - key: 2
+    clip: {fileID: 8300000, guid: 13a2b8f039a4d1f41b9a509c4051c2cd, type: 3}
+  - key: 3
+    clip: {fileID: 8300000, guid: a3c434d0b5a4d424f82fe1524885fbcc, type: 3}
+  musicLibrary: []
+  allowPlaceholderResourceFallbacks: 0
+  mainMenuMusicResourcePath: .Music/main_menu_music
+  gameplayCalmMusicResourcePath: Music/level_calm_open_water_loop
+  gameplayBattleMusicResourcePath: Music/level_battle_wave_loop
+  gameplayBossMusicResourcePath: Music/boss_wave_storm_loop
+  victoryMusicResourcePath: 
+  defeatMusicResourcePath: 

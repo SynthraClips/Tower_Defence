@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SwiftRaft
   m_EditorClassIdentifier: 
   displayName: Swift Raft
+  prefabOverride: {fileID: 5811814298424443616, guid: bf0b9346e0fd4ac59844d4d4e0b20160, type: 3}
   moveSpeed: 2.2
   maxHealth: 12
   damageToBase: 1

@@ -15,12 +15,12 @@ MonoBehaviour:
   displayName: Easy Harbor
   sceneName: Easy Level
   useManualPlacementBounds: 1
-  placementBoundsCenter: {x: 6, y: -0.6}
-  placementBoundsSize: {x: 19, y: 12}
-  waterRouteWidth: 1.15
+  placementBoundsCenter: {x: 0, y: 0}
+  placementBoundsSize: {x: 18, y: 10}
+  waterRouteWidth: 1.55
   waveDefinitions:
-  - {fileID: 11400000, guid: 5d7c69d59115444bbfa335dbd8ee7715, type: 2}
-  - {fileID: 11400000, guid: 8c875c9c07894887a82f79afdb92b274, type: 2}
-  - {fileID: 11400000, guid: c00b460a89594367a34bdc8a7f79b5b7, type: 2}
-  - {fileID: 11400000, guid: dc8baa2dc1ff4f35bf45fc44553a57d4, type: 2}
-  - {fileID: 11400000, guid: a624a04353eb451e8111343db07e6a2f, type: 2}
+  - {fileID: 11400000, guid: c756da108c864eea93638535cae57b69, type: 2}
+  - {fileID: 11400000, guid: d3bb11c47b824493b59281b1c164f3b4, type: 2}
+  - {fileID: 11400000, guid: e834e2a929704aa097badc866ef46389, type: 2}
+  - {fileID: 11400000, guid: 060360bce41d470fbb03488a91cd7cc7, type: 2}
+  - {fileID: 11400000, guid: 56a9af82eb0a4e50a59fdcbbf3735624, type: 2}

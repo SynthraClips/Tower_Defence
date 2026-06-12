@@ -1,23 +1,29 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WaterTD;
 
 public class MainMenuController : MonoBehaviour
 {
-    public string fallbackGameplayScene = "Easy Level";
+    public string fallbackGameplayScene = SceneNames.EasyLevel;
 
     private void Awake()
     {
-        // Ensure UI/input runs at normal speed after returning from gameplay
         Time.timeScale = 1f;
     }
 
-    public void OnClickPlay()        => SceneManager.LoadScene(fallbackGameplayScene);
-    public void OnClickLevelSelect() => SceneManager.LoadScene("LevelSelect");
-    public void OnClickSettings()    => SceneManager.LoadScene("Settings");
-	public void OnClickMenu()   	 => SceneManager.LoadScene("MainMenu");
-	public void OnClickEasyL()   	 => SceneManager.LoadScene("Easy Level");
-	public void OnClickMediumL()   	 => SceneManager.LoadScene("MediumLevel");
-	public void OnClickHardL()   	 => SceneManager.LoadScene("HardLevel");
+    private void Start()
+    {
+        TryPlayMenuMusic();
+    }
+
+    public void OnClickPlay() => LoadSceneSafe(fallbackGameplayScene, SceneNames.EasyLevel);
+    public void OnClickLevelSelect() => LoadSceneSafe(SceneNames.LevelSelect);
+    public void OnClickSettings() => LoadSceneSafe(SceneNames.Settings);
+    public void OnClickMenu() => LoadSceneSafe(SceneNames.MainMenu);
+    public void OnClickEasyL() => LoadSceneSafe(SceneNames.EasyLevel);
+    public void OnClickMediumL() => LoadSceneSafe(SceneNames.MediumLevel);
+    public void OnClickHardL() => LoadSceneSafe(SceneNames.HardLevel);
+
     public void OnClickQuit()
     {
 #if UNITY_EDITOR
@@ -25,5 +31,39 @@ public class MainMenuController : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    private static void LoadSceneSafe(string requestedScene, string fallbackScene = null)
+    {
+        string sceneToLoad = string.IsNullOrWhiteSpace(requestedScene) ? fallbackScene : requestedScene;
+        if (string.IsNullOrWhiteSpace(sceneToLoad))
+        {
+            Debug.LogWarning("[MainMenuController] No scene name supplied.");
+            return;
+        }
+
+        if (Application.CanStreamedLevelBeLoaded(sceneToLoad))
+        {
+            SceneManager.LoadScene(sceneToLoad);
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(fallbackScene) && Application.CanStreamedLevelBeLoaded(fallbackScene))
+        {
+            Debug.LogWarning($"[MainMenuController] Scene '{sceneToLoad}' was not in the build profile. Loading fallback '{fallbackScene}'.");
+            SceneManager.LoadScene(fallbackScene);
+            return;
+        }
+
+        Debug.LogWarning($"[MainMenuController] Scene '{sceneToLoad}' is not in the build profile or is misspelled.");
+    }
+
+    private void TryPlayMenuMusic()
+    {
+        if (AudioManager.Instance == null)
+        {
+            return;
+        }
+        AudioManager.Instance.PlayMusicCue(AudioManager.MusicCue.MainMenu);
     }
 }

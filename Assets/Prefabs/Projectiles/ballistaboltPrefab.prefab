@@ -28,9 +28,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2854398883746930889}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.6968162, w: -0.7172498}
-  m_LocalPosition: {x: -0.301, y: 1.9207, z: 0}
-  m_LocalScale: {x: 2.4887388, y: 2.4887388, z: 2.4887388}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.06, y: 0.06, z: 0.06}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -69,17 +69,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0036935285, y: 0.010203809}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0.07, y: 0.06, z: 0.06, w: 0.06}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.21, y: 0.35}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 9.796875, y: 9.796875}
+    newSize: {x: 9.796875, y: 9.796875}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.14099456, y: 0.28698683}
+  m_Size: {x: 3, y: 1.2}
   m_EdgeRadius: 0
 --- !u!50 &3285999193243439700
 Rigidbody2D:
@@ -123,13 +123,21 @@ MonoBehaviour:
   speed: 10
   damage: 10
   lifetime: 4
+  damageType: 0
   splashDamage: 0
   splashRadius: 0.6
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
+  impactDistance: 0.25
+  rotatingPart: {fileID: 0}
+  visualRotationOffsetDegrees: 0
+  rotateWholeProjectileWhenNoRotatingPart: 1
+  autoFixExtremeChildOffsets: 1
+  extremeChildOffsetThreshold: 2
 --- !u!212 &744010712359412674
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -175,14 +183,14 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 54aaea41b7a887f43b1d9ab8333bcfee, type: 3}
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: dbcac27297d062e4db3cc8ea0963fd96, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 1
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 9.796875, y: 9.796875}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0

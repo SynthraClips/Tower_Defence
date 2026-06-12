@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public enum TowerTargetType { WaterOnly, AirOnly, Any }
 public enum TowerArchetype { Light, Heavy, Magic, Air }
@@ -27,6 +29,8 @@ public abstract class Tower : MonoBehaviour
     public int buildCost = 30;
     [Range(0f, 1f)] public float sellRefundRatio = 0.7f;
     public TowerUpgradeLevel[] upgrades;
+    [FormerlySerializedAs("shopSprite")]
+    public Sprite shopIcon;
 
     [Header("Targeting")]
     public TowerTargetType targetType = TowerTargetType.WaterOnly;
@@ -34,21 +38,58 @@ public abstract class Tower : MonoBehaviour
     public LayerMask enemyLayer;
     public Transform rotatingPart;   // aim this at target
     public Transform firePoint;      // projectile spawn position
+    [SerializeField] private bool autoCentreRotatingPartOnVisual = true;
+    [SerializeField] private float rotationSmoothingDegreesPerSecond = 540f;
 
     [Header("Firing")]
     public Projectile projectilePrefab;
     public float shotsPerSecond = 1.0f;
 
+    [Header("Fallback Visual")]
+    [SerializeField] private bool createFallbackSpriteWhenMissing = false;
+    [SerializeField] private Color fallbackSpriteColour = new Color(0.35f, 0.55f, 0.85f, 1f);
+    [SerializeField] private Vector2 fallbackSpriteSize = new Vector2(0.75f, 0.75f);
+
     protected float _cooldown;
     protected Enemy _currentTarget;
     private BuildNode buildNode;
+    private Quaternion baseRotatingPartLocalRotation = Quaternion.identity;
+    private bool hasBaseRotatingPartRotation;
+    private static Sprite fallbackSprite;
 
     public int UpgradeLevel { get; private set; }
     public BuildNode BuildNode => buildNode;
 
+    protected virtual void Awake()
+    {
+        if (!rotatingPart)
+        {
+            rotatingPart = FindChildRecursive(transform, "rotatingPart");
+        }
+
+        if (!firePoint)
+        {
+            firePoint = FindChildRecursive(transform, "FirePoint");
+        }
+
+        if (rotatingPart)
+        {
+            NormaliseRotatingPartPivot();
+            CentreRotatingPartOnVisual();
+            baseRotatingPartLocalRotation = rotatingPart.localRotation;
+            hasBaseRotatingPartRotation = true;
+        }
+
+        EnsureFallbackVisual();
+    }
+
     protected virtual void Start()
     {
-        gameObject.layer = LayerMask.NameToLayer("Tower");
+        int towerLayer = LayerMask.NameToLayer("Tower");
+        if (towerLayer >= 0)
+        {
+            gameObject.layer = towerLayer;
+        }
     }
 
     protected virtual void Update()
@@ -168,18 +209,27 @@ public abstract class Tower : MonoBehaviour
     protected virtual void AimAtTarget()
     {
         if (!_currentTarget || !rotatingPart) return;
-        Vector2 dir = _currentTarget.transform.position - rotatingPart.position;
+        Vector2 dir = _currentTarget.AimPosition - rotatingPart.position;
+        if (dir.sqrMagnitude <= 0.000001f) return;
+
         float ang = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        rotatingPart.rotation = Quaternion.AngleAxis(ang, Vector3.forward);
+        Quaternion targetWorldRotation = Quaternion.AngleAxis(ang, Vector3.forward);
+        Quaternion parentRotation = rotatingPart.parent ? rotatingPart.parent.rotation : Quaternion.identity;
+        Quaternion baseRotation = hasBaseRotatingPartRotation ? baseRotatingPartLocalRotation : Quaternion.identity;
+        Quaternion targetLocalRotation = Quaternion.Inverse(parentRotation) * targetWorldRotation * baseRotation;
+        rotatingPart.localRotation = rotationSmoothingDegreesPerSecond <= 0f
+            ? targetLocalRotation
+            : Quaternion.RotateTowards(rotatingPart.localRotation, targetLocalRotation, rotationSmoothingDegreesPerSecond * Time.deltaTime);
     }
 
     protected void Fire()
     {
-        if (!projectilePrefab || !firePoint || !_currentTarget) return;
+        if (!projectilePrefab || !_currentTarget) return;
 
-        var proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        Transform spawnTransform = firePoint ? firePoint : rotatingPart ? rotatingPart : transform;
+        var proj = Instantiate(projectilePrefab, spawnTransform.position, spawnTransform.rotation);
         proj.damageType = damageType;
-        proj.Launch(_currentTarget.transform);
+        proj.Launch(_currentTarget);
 
         AudioManager.Instance?.PlaySFX(ResolveFireSfx());
     }
@@ -189,12 +239,13 @@ public abstract class Tower : MonoBehaviour
         var hits = Physics2D.OverlapCircleAll(transform.position, range, enemyLayer);
         Enemy best = null;
         float bestScore = float.MaxValue;
+        var seenEnemies = new HashSet<Enemy>();
 
         foreach (var h in hits)
         {
             if (!h) continue;
-            var e = h.GetComponent<Enemy>();
-            if (e && IsValidTarget(e))
+            var e = h.GetComponentInParent<Enemy>();
+            if (e && seenEnemies.Add(e) && IsValidTarget(e))
             {
                 float score = GetTargetScore(e);
                 if (score < bestScore)
@@ -220,7 +271,7 @@ public abstract class Tower : MonoBehaviour
 
     private float GetTargetScore(Enemy enemy)
     {
-        float distance = Vector2.Distance(transform.position, enemy.transform.position);
+        float distance = Vector2.Distance(transform.position, enemy.AimPosition);
         return attackPreferenceMode switch
         {
             AttackPreferenceMode.Weak => enemy.CurrentHealth * 1000f + distance,
@@ -243,6 +294,120 @@ public abstract class Tower : MonoBehaviour
             TowerArchetype.Air => SFX.AirFire,
             _ => SFX.Ballista,
         };
+    }
+
+    private static Transform FindChildRecursive(Transform parent, string childName)
+    {
+        foreach (Transform child in parent)
+        {
+            if (string.Equals(child.name, childName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return child;
+            }
+
+            Transform nestedMatch = FindChildRecursive(child, childName);
+            if (nestedMatch)
+            {
+                return nestedMatch;
+            }
+        }
+
+        return null;
+    }
+
+    private void CentreRotatingPartOnVisual()
+    {
+        if (!autoCentreRotatingPartOnVisual || !rotatingPart)
+        {
+            return;
+        }
+
+        SpriteRenderer visualRenderer = rotatingPart.GetComponentInChildren<SpriteRenderer>();
+        if (!visualRenderer)
+        {
+            return;
+        }
+
+        Vector3 offset = visualRenderer.bounds.center - rotatingPart.position;
+        offset.z = 0f;
+        if (offset.sqrMagnitude <= 0.000001f)
+        {
+            return;
+        }
+
+        rotatingPart.position += offset;
+        if (firePoint)
+        {
+            firePoint.position += offset;
+        }
+    }
+
+    private void NormaliseRotatingPartPivot()
+    {
+        if (!rotatingPart || rotatingPart.parent != transform)
+        {
+            return;
+        }
+
+        Vector3 pivotOffset = rotatingPart.localPosition;
+        if (pivotOffset.sqrMagnitude <= 0.000001f)
+        {
+            return;
+        }
+
+        var children = new List<Transform>();
+        foreach (Transform child in rotatingPart)
+        {
+            children.Add(child);
+        }
+
+        rotatingPart.localPosition = Vector3.zero;
+        foreach (Transform child in children)
+        {
+            child.localPosition += pivotOffset;
+        }
+    }
+
+    private void EnsureFallbackVisual()
+    {
+        if (!createFallbackSpriteWhenMissing)
+        {
+            return;
+        }
+
+        SpriteRenderer renderer = GetComponentInChildren<SpriteRenderer>();
+        if (renderer && renderer.sprite)
+        {
+            return;
+        }
+
+        Transform parent = rotatingPart ? rotatingPart : transform;
+        var fallbackObject = new GameObject("FallbackTowerVisual");
+        fallbackObject.transform.SetParent(parent, false);
+        fallbackObject.transform.localPosition = Vector3.zero;
+        fallbackObject.transform.localRotation = Quaternion.identity;
+        fallbackObject.transform.localScale = new Vector3(fallbackSpriteSize.x, fallbackSpriteSize.y, 1f);
+
+        var fallbackRenderer = fallbackObject.AddComponent<SpriteRenderer>();
+        fallbackRenderer.sprite = GetFallbackSprite();
+        fallbackRenderer.color = fallbackSpriteColour;
+        fallbackRenderer.sortingOrder = 1;
+    }
+
+    private static Sprite GetFallbackSprite()
+    {
+        if (fallbackSprite)
+        {
+            return fallbackSprite;
+        }
+
+        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+        texture.name = "RuntimeTowerFallbackSprite";
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+        fallbackSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+        fallbackSprite.name = "RuntimeTowerFallbackSprite";
+        return fallbackSprite;
     }
 
     private void OnDrawGizmosSelected()

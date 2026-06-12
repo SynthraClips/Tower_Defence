@@ -282,15 +282,20 @@ public class Spawner : MonoBehaviour
 
     private void Spawn(BoatEnemyDefinition definition, BoatTier fallbackTier)
     {
-        if (!ValidatePath() || !boatPrefab)
+        if (!ValidatePath())
         {
-            Debug.LogWarning("[Spawner] Missing path or boat prefab, spawn skipped.");
             return;
         }
 
-        var boat = Instantiate(boatPrefab, path.GetWaypoint(0).position, Quaternion.identity);
-        boat.path = path;
-        boat.ownerSpawner = this;
+        BoatEnemy prefab = ResolveBoatPrefab(definition);
+        if (!prefab)
+        {
+            Debug.LogWarning("[Spawner] Missing boat prefab, spawn skipped.");
+            return;
+        }
+
+        var boat = Instantiate(prefab, path.GetWaypoint(0).position, Quaternion.identity);
+        boat.InitialisePath(path, this, true);
         if (definition)
         {
             boat.ApplyDefinition(definition);
@@ -309,7 +314,7 @@ public class Spawner : MonoBehaviour
             return;
         }
 
-        var prefab = bossPrefab ? bossPrefab : boatPrefab;
+        var prefab = bossPrefab ? bossPrefab : ResolveBoatPrefab(bossBoatDefinition);
         if (!prefab)
         {
             Debug.LogWarning("[Spawner] Boss spawn requested but no boss-capable prefab is assigned.");
@@ -317,8 +322,7 @@ public class Spawner : MonoBehaviour
         }
 
         var boss = Instantiate(prefab, path.GetWaypoint(0).position, Quaternion.identity);
-        boss.path = path;
-        boss.ownerSpawner = this;
+        boss.InitialisePath(path, this, true);
         if (bossBoatDefinition)
         {
             boss.ApplyDefinition(bossBoatDefinition);
@@ -335,6 +339,17 @@ public class Spawner : MonoBehaviour
         aliveThisWave++;
         OnBossSpawned?.Invoke(CurrentWaveIndex);
         AudioManager.Instance?.PlaySFX(SFX.BossSpawn);
+    }
+
+
+    private BoatEnemy ResolveBoatPrefab(BoatEnemyDefinition definition)
+    {
+        if (definition && definition.prefabOverride)
+        {
+            return definition.prefabOverride;
+        }
+
+        return boatPrefab;
     }
 
     private bool ValidatePath()

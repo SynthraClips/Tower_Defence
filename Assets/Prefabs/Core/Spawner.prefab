@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4177379595826953221}
+  - component: {fileID: 2194423941645664083}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -31,3 +32,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2194423941645664083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5694294503237564443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b62975a7d4d3da848a65ca4f2bfd9137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  path: {fileID: 0}
+  boatPrefab: {fileID: 5811814298424443616, guid: 0c09c5ab097e3f44d878ddd20b991b04, type: 3}
+  waveDefinitions: []
+  weakBoatDefinition: {fileID: 11400000, guid: 9a6fe62e594848d69d84f38630beccf5, type: 2}
+  mediumBoatDefinition: {fileID: 11400000, guid: a2389384641b4195a8630efe3da46ad1, type: 2}
+  hardBoatDefinition: {fileID: 11400000, guid: 6f4d97ad52ca49589270d9eb17decc89, type: 2}
+  swiftBoatDefinition: {fileID: 11400000, guid: 885cbf5461e349ed928e80e4ca6457cd, type: 2}
+  bossBoatDefinition: {fileID: 11400000, guid: 520f5409e5f7400c8bdf33be6d2907cf, type: 2}
+  timeBetweenWaves: 6
+  baseWaveGold: 20
+  perWaveBonus: 2
+  enableBossWaves: 1
+  bossEveryNWaves: 5
+  bossPrefab: {fileID: 0}
+  bossHealth: 600
+  bossMoveSpeed: 0.9
+  bossDamageToBase: 5
+  bossGoldReward: 120
+  bossWaveBonusGold: 50
+  bossLifeHeal: 1
